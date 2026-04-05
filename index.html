@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Judicial Engineering — I Trace It Back</title>
+  <meta name="description" content="3PL diagnostic consulting and AI-powered freight audit tools. We trace the break. You recover the money." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --pink: #FF2D78;
+  --pink-dim: rgba(255,45,120,0.08);
+  --pink-border: rgba(255,45,120,0.3);
+  --dark: #090909;
+  --charcoal: #141416;
+  --card: #111113;
+  --silver: #909090;
+  --light-silver: #D8D8D8;
+  --white: #FFFFFF;
+  --yellow: #FFD600;
+  --green: #00E676;
+  --dim: #444444;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--light-silver);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 3rem;
+  background: rgba(9,9,9,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.nav-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.nav-logo-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.nav-logo-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--pink);
+  letter-spacing: 0.15em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--silver);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--white); }
+
+.nav-cta {
+  background: var(--pink) !important;
+  color: var(--white) !important;
+  padding: 0.5rem 1.25rem;
+  transition: box-shadow 0.2s, transform 0.2s !important;
+}
+
+.nav-cta:hover {
+  box-shadow: 0 0 20px rgba(255,45,120,0.4) !important;
+  transform: translateY(-1px);
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 8rem 3rem 5rem;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,45,120,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,45,120,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,45,120,0.12) 0%, transparent 70%);
+  top: -100px;
+  right: -100px;
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.8s ease both;
+}
+
+.eyebrow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pink);
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.eyebrow-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  color: var(--pink);
+  text-transform: uppercase;
+}
+
+.hero-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  line-height: 0.95;
+  color: var(--white);
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.hero-headline em {
+  font-style: normal;
+  color: var(--pink);
+  position: relative;
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  color: var(--silver);
+  max-width: 540px;
+  line-height: 1.75;
+  margin-bottom: 3rem;
+  font-weight: 300;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+
+.btn-primary {
+  background: var(--pink);
+  color: var(--white);
+  padding: 1rem 2.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 32px rgba(255,45,120,0.45);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--silver);
+  padding: 1rem 2.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: inline-block;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-outline:hover {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.hero-stat-row {
+  display: flex;
+  gap: 3rem;
+  margin-top: 4rem;
+  flex-wrap: wrap;
+  animation: fadeUp 0.8s 0.4s ease both;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.hero-stat span {
+  display: block;
+}
+
+.hero-stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--silver);
+  text-transform: uppercase;
+  margin-top: 0.35rem;
+}
+
+/* ── SECTIONS ── */
+section {
+  position: relative;
+  z-index: 1;
+}
+
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+}
+
+.section-body {
+  color: var(--silver);
+  font-size: 1rem;
+  line-height: 1.8;
+  max-width: 560px;
+}
+
+/* ── THE PROBLEM ── */
+.problem {
+  padding: 7rem 3rem;
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.problem-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.problem-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.problem-stat-card {
+  background: var(--dark);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.problem-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--pink);
+}
+
+.problem-stat-card:hover {
+  border-color: rgba(255,45,120,0.2);
+}
+
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--pink);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--silver);
+  line-height: 1.6;
+}
+
+/* ── SUITE ── */
+.suite {
+  padding: 7rem 3rem;
+}
+
+.suite-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.suite-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.suite-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5px;
+  background: rgba(255,255,255,0.04);
+}
+
+.suite-card {
+  background: var(--charcoal);
+  padding: 2.5rem;
+  text-decoration: none;
+  display: block;
+  transition: background 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.suite-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--pink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.suite-card:hover { background: #1a1a1c; }
+.suite-card:hover::after { transform: scaleX(1); }
+
+.card-layer {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 1.25rem;
+  display: block;
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  color: var(--silver);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.card-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--pink);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-tag {
+  display: inline-block;
+  background: rgba(0,230,118,0.1);
+  border: 1px solid rgba(0,230,118,0.25);
+  color: var(--green);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.6rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+/* ── HOW IT WORKS ── */
+.how {
+  padding: 7rem 3rem;
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.how-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.how-header {
+  margin-bottom: 4rem;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pink), var(--pink), transparent);
+  opacity: 0.3;
+}
+
+.step {
+  padding: 0 2rem 0 0;
+}
+
+.step-number {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--pink);
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--pink);
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.step-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+}
+
+.step-desc {
+  font-size: 0.85rem;
+  color: var(--silver);
+  line-height: 1.7;
+}
+
+/* ── ABOUT ── */
+.about {
+  padding: 7rem 3rem;
+}
+
+.about-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.about-visual {
+  position: relative;
+}
+
+.about-card {
+  background: var(--charcoal);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 3rem;
+  position: relative;
+}
+
+.about-card::before {
+  content: '"';
+  position: absolute;
+  top: -1.5rem;
+  left: 2rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 8rem;
+  color: var(--pink);
+  opacity: 0.15;
+  line-height: 1;
+}
+
+.about-quote {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--white);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.about-attribution {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--pink);
+  text-transform: uppercase;
+}
+
+.about-accent {
+  position: absolute;
+  bottom: -16px;
+  right: -16px;
+  width: 80px;
+  height: 80px;
+  background: var(--pink);
+  opacity: 0.15;
+}
+
+.credential-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+
+.credential-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--silver);
+  line-height: 1.5;
+}
+
+.credential-item::before {
+  content: '◆';
+  color: var(--pink);
+  font-size: 0.6rem;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* ── SERVICES ── */
+.services {
+  padding: 7rem 3rem;
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.services-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.services-header {
+  margin-bottom: 4rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5px;
+  background: rgba(255,255,255,0.04);
+  margin-bottom: 3rem;
+}
+
+.service-card {
+  background: var(--dark);
+  padding: 2.5rem;
+}
+
+.service-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+  line-height: 1.2;
+}
+
+.service-tagline {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.service-desc {
+  font-size: 0.88rem;
+  color: var(--silver);
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+}
+
+.service-price {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--silver);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.service-price strong {
+  color: var(--yellow);
+}
+
+/* ── CTA ── */
+.cta-section {
+  padding: 7rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,45,120,0.08) 0%, transparent 60%);
+}
+
+.cta-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cta-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+}
+
+.cta-sub {
+  color: var(--silver);
+  font-size: 1rem;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.cta-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 3rem;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.footer-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--white);
+}
+
+.footer-tag {
+  color: var(--pink);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--silver);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--white); }
+
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── TICKER ── */
+.ticker {
+  background: var(--pink);
+  padding: 0.6rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker-inner {
+  display: inline-flex;
+  animation: ticker 28s linear infinite;
+  gap: 0;
+}
+
+.ticker-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--white);
+  text-transform: uppercase;
+  padding: 0 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ticker-item::after {
+  content: '◆';
+  opacity: 0.4;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .hero { padding: 7rem 1.5rem 4rem; }
+  .problem-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .suite-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .steps::before { display: none; }
+  .about-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .services-grid { grid-template-columns: 1fr; }
+  .problem, .suite, .how, .about, .services, .cta-section { padding: 5rem 1.5rem; }
+  footer { padding: 2rem 1.5rem; }
+  .footer-inner { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .hero-headline { font-size: 2.75rem; }
+  .hero-stat-row { gap: 2rem; }
+  .steps { grid-template-columns: 1fr; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+
+  <nav>
+    <div class="nav-logo">
+      <span class="nav-logo-name">Judicial Engineering</span>
+      <span class="nav-logo-tag">I Trace It Back.</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#suite">The Suite</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#suite" class="nav-cta">Run Free Diagnostic</a></li>
+    </ul>
+  </nav>
+
+  <!-- TICKER -->
+
+  <div class="ticker" style="margin-top: 68px;">
+    <div class="ticker-inner">
+      <!-- Repeated for seamless loop -->
+      <span class="ticker-item">Accessorial Audit</span>
+      <span class="ticker-item">Root Cause Analysis</span>
+      <span class="ticker-item">Billing Accuracy</span>
+      <span class="ticker-item">Dispute Recovery</span>
+      <span class="ticker-item">3PL Diagnostics</span>
+      <span class="ticker-item">Freight Governance</span>
+      <span class="ticker-item">I Trace It Back</span>
+      <span class="ticker-item">Accessorial Audit</span>
+      <span class="ticker-item">Root Cause Analysis</span>
+      <span class="ticker-item">Billing Accuracy</span>
+      <span class="ticker-item">Dispute Recovery</span>
+      <span class="ticker-item">3PL Diagnostics</span>
+      <span class="ticker-item">Freight Governance</span>
+      <span class="ticker-item">I Trace It Back</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <div class="eyebrow-dot"></div>
+        <span class="eyebrow-text">3PL Diagnostic Consulting · Atlanta, GA</span>
+      </div>
+      <h1 class="hero-headline">
+        Your charges<br />
+        have a <em>break.</em><br />
+        We find it.
+      </h1>
+      <p class="hero-sub">
+        Accessorial charges are bleeding your operation. Most 3PLs can't see it, can't trace it, and can't stop it. We built the tools — and the expertise — to change that.
+      </p>
+      <div class="hero-actions">
+        <a href="#suite" class="btn-primary">Run Free Diagnostic →</a>
+        <a href="#services" class="btn-outline">View Services</a>
+      </div>
+      <div class="hero-stat-row">
+        <div class="hero-stat">
+          <span class="hero-stat-number">69%</span>
+          <span class="hero-stat-label">of 3PLs lack full supply chain visibility</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">30%</span>
+          <span class="hero-stat-label">profit margin improvement with billing accuracy</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">20yr</span>
+          <span class="hero-stat-label">freight ops expertise behind every diagnostic</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+
+  <section class="problem" id="problem">
+    <div class="problem-inner">
+      <div class="reveal">
+        <div class="section-label">The Problem</div>
+        <h2 class="section-title">The break is already happening. You just can't see it.</h2>
+        <p class="section-body">Accessorial charges don't announce themselves. They accumulate quietly — in contracts nobody checks, on invoices nobody reconciles, in lanes nobody's watching. By the time someone notices, months of revenue are gone.</p>
+        <p class="section-body" style="margin-top: 1rem;">Judicial Engineering makes the invisible visible. We trace every charge back to its root cause — and we give your team the tools to stop it from happening again.</p>
+      </div>
+      <div class="problem-stats reveal">
+        <div class="problem-stat-card">
+          <div class="stat-number">$8K+</div>
+          <div class="stat-desc">Average monthly accessorial exposure found in first diagnostic — often invisible before analysis</div>
+        </div>
+        <div class="problem-stat-card">
+          <div class="stat-number">3×</div>
+          <div class="stat-desc">Most recurring charge patterns trace back to a single process failure that nobody named yet</div>
+        </div>
+        <div class="problem-stat-card">
+          <div class="stat-number">0</div>
+          <div class="stat-desc">Number of 3PLs we've worked with that had a formal accessorial root cause process before we built one</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUITE -->
+
+  <section class="suite" id="suite">
+    <div class="suite-inner">
+      <div class="suite-header reveal">
+        <div class="section-label">The 3PL Diagnostic Suite</div>
+        <h2 class="section-title">Three tools.<br />One system.<br />Zero guesswork.</h2>
+        <p class="section-body" style="margin: 1rem auto 0;">Start free. The tools get smarter as you go. Each layer feeds the next — and every result points back to the expertise that built them.</p>
+      </div>
+
+```
+  <div class="suite-grid reveal">
+    <!-- Layer 1 -->
+    <a href="/diagnostic" class="suite-card">
+      <div class="card-tag">Free · Always</div>
+      <div class="card-layer">Layer 01 · Scorecard</div>
+      <span class="card-icon">📊</span>
+      <div class="card-title">Accessorial Diagnostic Scorecard</div>
+      <p class="card-desc">20 questions. 5 categories. A scored map of exactly where your accessorial process is breaking — and how badly.</p>
+      <div class="card-link">Start Diagnostic →</div>
+    </a>
+
+    <!-- Layer 2 -->
+    <a href="/break-report" class="suite-card">
+      <div class="card-tag">Free · Always</div>
+      <div class="card-layer">Layer 02 · Monthly Report</div>
+      <span class="card-icon">📋</span>
+      <div class="card-title">Monthly Break Report</div>
+      <p class="card-desc">Billing and ops fill it together. Clients receive a clean summary. The pattern builds month over month — and so does your case for fixing it.</p>
+      <div class="card-link">Open Report →</div>
+    </a>
+
+    <!-- Layer 3 -->
+    <a href="/break-finder" class="suite-card">
+      <div class="card-tag">Free Beta</div>
+      <div class="card-layer">Layer 03 · AI-Powered</div>
+      <span class="card-icon">⚡</span>
+      <div class="card-title">AI Break Finder</div>
+      <p class="card-desc">Upload your charge data. The AI diagnoses every break, scores your total exposure, and sends the full report to your inbox. Rebecca reviews every submission personally.</p>
+      <div class="card-link">Run AI Analysis →</div>
+    </a>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- HOW IT WORKS -->
+
+  <section class="how" id="how">
+    <div class="how-inner">
+      <div class="how-header reveal">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">From data to diagnosis<br />to dollars recovered.</h2>
+      </div>
+      <div class="steps reveal">
+        <div class="step">
+          <div class="step-number">01</div>
+          <div class="step-title">Run the Scorecard</div>
+          <p class="step-desc">20 questions across 5 categories. Takes 8 minutes. Surfaces exactly where your accessorial process is breaking and what it's costing you.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">02</div>
+          <div class="step-title">Track It Monthly</div>
+          <p class="step-desc">The Break Report becomes your team's operating rhythm. Billing populates it. Ops reviews it. Clients see a clean summary. Patterns emerge.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">03</div>
+          <div class="step-title">AI Diagnoses the Breaks</div>
+          <p class="step-desc">Upload your charge data. The AI Break Finder scores your exposure, ranks the breaks, and identifies root causes your team hasn't named yet.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">04</div>
+          <div class="step-title">We Fix It Together</div>
+          <p class="step-desc">When the AI flags an escalation, Rebecca gets the report. A Trace The Break engagement begins — and the leak stops.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="reveal">
+        <div class="about-card">
+          <p class="about-quote">"I spent 20 years watching freight operations bleed money through breaks nobody had named yet. I built Judicial Engineering to name them — and trace them back."</p>
+          <div class="about-attribution">Rebecca Thompson · Founder, Judicial Engineering</div>
+          <div class="about-accent"></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="section-label">About</div>
+        <h2 class="section-title">Operations translator.<br />Freight diagnostician.<br />I Trace It Back.</h2>
+        <p class="section-body">Judicial Engineering was built on 20 years of freight logistics, governance, billing audit, intermodal operations, and training development — and the observation that most 3PL problems are invisible not because they're complex, but because nobody built a system to see them.</p>
+        <ul class="credential-list">
+          <li class="credential-item">20 years across freight audit, billing governance, and intermodal operations</li>
+          <li class="credential-item">Built training infrastructure from scratch at scale — processes, SOPs, and documentation</li>
+          <li class="credential-item">Specialty in tracing operational failures back to their root cause and building systems that prevent recurrence</li>
+          <li class="credential-item">Based in Atlanta, GA · Serving 3PLs, brokerages, and shippers nationally</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+
+  <section class="services" id="services">
+    <div class="services-inner">
+      <div class="services-header reveal">
+        <div class="section-label">Consulting Services</div>
+        <h2 class="section-title">When the tools find it,<br />we fix it.</h2>
+        <p class="section-body">The diagnostic suite runs free. When the breaks are too complex to fix alone — that's when Judicial Engineering steps in.</p>
+      </div>
+
+```
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-name">Trace The Break</div>
+      <div class="service-tagline">90-Day Sales & Ops Diagnostic</div>
+      <p class="service-desc">A deep-dive engagement that traces your accessorial charge patterns to their root cause, builds corrective process, and gives your team the framework to prevent recurrence.</p>
+      <div class="service-price">Engagement-based pricing · <strong>Contact for scope</strong></div>
+    </div>
+    <div class="service-card">
+      <div class="service-name">White Glove Mindset</div>
+      <div class="service-tagline">Operations Workshop</div>
+      <p class="service-desc">A half-day or full-day workshop for 3PL operations teams — freight and universal versions available. Builds the mindset and process discipline that makes charges visible before they compound.</p>
+      <div class="service-price">Workshop pricing · <strong>Contact for availability</strong></div>
+    </div>
+    <div class="service-card">
+      <div class="service-name">Dispatch Your Power</div>
+      <div class="service-tagline">Individual & Team Program</div>
+      <p class="service-desc">For freight professionals building their operational authority. Documentation, governance, and the systems thinking that turns invisible work into undeniable results.</p>
+      <div class="service-price">Program pricing · <strong>Contact for details</strong></div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 1rem; padding: 2rem; background: var(--dark); border: 1px solid rgba(255,255,255,0.05);" class="reveal">
+    <div style="font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.15em; color: var(--pink); text-transform: uppercase; margin-bottom: 0.75rem;">All Consulting Engagements</div>
+    <p style="color: var(--silver); font-size: 0.88rem; line-height: 1.7; max-width: 500px; margin: 0 auto;">Begin with a signed Mutual Non-Disclosure Agreement. Your data, your clients, your processes — protected from day one.</p>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- CTA -->
+
+  <section class="cta-section">
+    <div class="cta-bg"></div>
+    <div class="cta-inner reveal">
+      <div class="section-label" style="text-align: center;">Start Now</div>
+      <h2 class="cta-title">The break is already in your data.<br />Run the diagnostic.</h2>
+      <p class="cta-sub">Free. No credit card. No commitment. Just your data, the AI, and a clear picture of what's costing you money right now.</p>
+      <div class="cta-actions">
+        <a href="/diagnostic" class="btn-primary">Run Free Scorecard →</a>
+        <a href="mailto:judicialengineering@gmail.com" class="btn-outline">Talk to Rebecca</a>
+      </div>
+      <div class="cta-note">Every AI submission reviewed personally · NDA provided for all consulting engagements</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Judicial Engineering</div>
+        <span class="footer-tag">I Trace It Back.</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#suite">Diagnostic Suite</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="mailto:judicialengineering@gmail.com">Contact</a></li>
+      </ul>
+      <div class="footer-copy">© 2026 Judicial Engineering · Atlanta, GA · All rights reserved</div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Nav background on scroll
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.borderBottomColor = window.scrollY > 50
+        ? 'rgba(255,45,120,0.15)'
+        : 'rgba(255,255,255,0.04)';
+    });
+  </script>
+
+</body>
+</html>
