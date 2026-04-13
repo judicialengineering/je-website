@@ -146,32 +146,44 @@ ${escalationReason?`ESCALATION:\n${escalationReason}`:""}
 Judicial Engineering - I Trace It Back - judicialengineering.com`;
 
  try {
- await fetch("https://api.emailjs.com/api/v1.0/email/send",{
- method:"POST",
- headers:{"Content-Type":"application/json"},
- body:JSON.stringify({
- service_id:EMAILJS_SERVICE_ID,
- template_id:EMAILJS_TEMPLATE_ID,
- user_id:EMAILJS_PUBLIC_KEY,
- template_params:{
- to_email:toEmail,
- to_name:toName,
- cc_email:"judicialengineering@gmail.com",
- company_name:companyName||"Not provided",
- period:period||"Not provided",
- break_score:score,
- severity:severity?.toUpperCase(),
- total_exposure:totalExposure||"N/A",
- summary,
- top_pattern:topPattern,
- report_body:reportBody,
- escalation_reason:escalationReason||"No escalations flagged.",
- break_count:breaks?.length||0,
- },
- }),
- });
- } catch(e){console.warn("Email send failed:",e);}
-}
+ const payload = {
+service_id:EMAILJS_SERVICE_ID,
+template_id:EMAILJS_TEMPLATE_ID,
+user_id:EMAILJS_PUBLIC_KEY,
+template_params:{
+to_email:toEmail,
+to_name:toName,
+company_name:companyName||"Not provided",
+period:period||"Not provided",
+break_score:score,
+severity:severity?.toUpperCase(),
+total_exposure:totalExposure||"N/A",
+summary,
+top_pattern:topPattern,
+report_body:reportBody,
+escalation_reason:escalationReason||"No escalations flagged.",
+break_count:breaks?.length||0,
+},
+};
+
+await fetch("https://api.emailjs.com/api/v1.0/email/send",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(payload),
+});
+
+await fetch("https://api.emailjs.com/api/v1.0/email/send",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+...payload,
+template_params:{
+...payload.template_params,
+to_email:"judicialengineering@gmail.com",
+to_name:"Rebecca Thompson",
+},
+}),
+});
 
 function PulseRing({color}) {
  return (
