@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Break Finder - Judicial Engineering</title>
+<meta name="description" content="Upload your charge data. The AI diagnoses every break, scores your total exposure and sends the full report to your inbox."/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#090909;color:#d0d0d0;font-family:Georgia,serif;line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;background:rgba(9,9,9,0.95);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{display:flex;flex-direction:column;gap:2px;text-decoration:none}
+.nav-name{font-family:‘Courier New’,monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.nav-tag{font-family:‘Courier New’,monospace;font-size:0.55rem;color:#FF2D78;letter-spacing:0.15em}
+.nav-links{display:flex;gap:2rem;align-items:center;list-style:none}
+.nav-links a{font-family:‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.1em;color:#888;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:#FF2D78!important;color:#fff!important;padding:0.5rem 1.25rem}
+
+#root{padding-top:68px}
+
+footer{background:#111113;border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+.footer-name{font-family:‘Courier New’,monospace;font-size:0.7rem;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.footer-tag{display:block;font-family:‘Courier New’,monospace;font-size:0.55rem;letter-spacing:0.14em;color:#FF2D78;margin-top:3px}
+.footer-links{display:flex;gap:2rem;list-style:none;flex-wrap:wrap}
+.footer-links a{font-family:‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-decoration:none;text-transform:uppercase}
+.footer-links a:hover{color:#fff}
+.footer-copy{font-family:‘Courier New’,monospace;font-size:0.56rem;letter-spacing:0.08em;color:#333}
+
+@keyframes ping{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(2.2);opacity:0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+@media(max-width:900px){
+nav{padding:1rem 1.5rem}
+.nav-links{display:none}
+footer{padding:2rem 1.5rem}
+.footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+ <a href="/" class="nav-brand">
+ <span class="nav-name">Judicial Engineering</span>
+ <span class="nav-tag">I Trace It Back.</span>
+ </a>
+ <ul class="nav-links">
+ <li><a href="/#suite">The Suite</a></li>
+ <li><a href="/#how">How It Works</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/contact" class="nav-cta">Contact</a></li>
+ </ul>
+</nav>
+
+<div id="root"></div>
+
+<footer>
+ <div class="footer-inner">
+ <div>
+ <span class="footer-name">Judicial Engineering</span>
+ <span class="footer-tag">I Trace It Back.</span>
+ </div>
+ <ul class="footer-links">
+ <li><a href="/#suite">Diagnostic Suite</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/contact">Contact</a></li>
+ </ul>
+ <div class="footer-copy">© 2026 Judicial Engineering · Atlanta, GA</div>
+ </div>
+</footer>
+
+<script type="text/babel">
+
+// ── EMAILJS CREDENTIALS ──
+// Replace these three values with your real credentials before uploading to GitHub
+// Do NOT share these values publicly
+const EMAILJS_SERVICE_ID = "service_988ltds"; // e.g. service_xxxxxxx
+const EMAILJS_TEMPLATE_ID = "template_az2gnuc"; // your template ID
+const EMAILJS_PUBLIC_KEY = "OdBrBXj01P0oEjzmi"; // from EmailJS Account > API Keys
+
+const JE = {
+ dark:"#0D0D0D", charcoal:"#1C1C1E", pink:"#FF2D78",
+ pinkDim:"rgba(255,45,120,0.08)", pinkBorder:"rgba(255,45,120,0.3)",
+ silver:"#B0B0B0", lightSilver:"#E5E5E5", white:"#FFFFFF",
+ yellow:"#FFD600", green:"#00E676", dim:"#555555", cardBg:"#161618",
+};
+
+const SAMPLE_DATA = `charge_type,client,lane,count,amount,month
+Detention,Acme Distribution,Lane 7,8,1640.00,March
+Detention,Acme Distribution,Lane 7,6,1230.00,February
+Detention,Acme Distribution,Lane 7,9,1845.00,January
+Liftgate,Bradshaw Foods,Southeast,4,480.00,March
+Liftgate,Bradshaw Foods,Southeast,4,480.00,February
+Redelivery,Nexus Parts,Midwest,3,540.00,March
+Redelivery,Nexus Parts,Midwest,5,900.00,February
+Address Correction,Nexus Parts,Midwest,7,210.00,March
+Non-Compliant Receiving,Acme Distribution,Lane 3,2,300.00,March
+Fuel Surcharge Variance,All Clients,All Lanes,12,2100.00,March`;
+
+const TERMS_SECTIONS = [
+ {title:"What You Are Submitting",body:"By using the AI Break Finder, you may submit freight billing data, accessorial charge records, client names, lane information, carrier details and other business information. You represent that you have the authority to submit this data for analysis on behalf of your organization."},
+ {title:"How We Use Your Data",body:"Diagnostic Data is used solely to generate your diagnostic report. Judicial Engineering will not sell, license or share your Diagnostic Data with any third party. Rebecca Thompson (Founder, Judicial Engineering) receives a copy of every submission to review escalations and may contact you to discuss findings."},
+ {title:"Trade Secrets and Confidentiality",body:"We understand your data may contain trade secrets and proprietary business information including client names, carrier relationships, lane data and pricing. Judicial Engineering treats all Diagnostic Data as strictly confidential."},
+ {title:"Your Data Rights and Ownership",body:"You retain full ownership of all data you submit. Judicial Engineering claims no ownership interest in your Diagnostic Data, client relationships or operational information. You may request deletion of your submission at any time by contacting judicialengineering@gmail.com."},
+ {title:"Anonymized Insights",body:"Judicial Engineering may retain anonymized and aggregated insights derived from submissions to improve its diagnostic frameworks. No identifying information is retained or disclosed in this process."},
+ {title:"Intellectual Property",body:"The 3PL Diagnostic Suite including its AI prompts, scoring methodology, diagnostic frameworks and report formats is proprietary to Judicial Engineering. Nothing here grants you any license to reproduce or distribute these tools."},
+ {title:"No Legal or Financial Advice",body:"The AI Break Finder provides operational diagnostics only. Nothing in the report constitutes legal, financial or compliance advice. For matters involving freight contract disputes or carrier liability, consult qualified counsel."},
+ {title:"Full Mutual NDA for Consulting",body:"This tool-level agreement governs use of the AI Break Finder only. Any paid Judicial Engineering consulting service requires a signed Mutual Non-Disclosure Agreement executed by both parties before confidential data is shared in that deeper context."},
+ {title:"Escalation Consent",body:"By submitting this analysis, you consent to Judicial Engineering reviewing your results and contacting you at the email address provided to discuss flagged escalations or consulting services. You may opt out of follow-up at any time."},
+ {title:"Governing Law",body:"This agreement is governed by the laws of the State of Georgia. Any disputes arising from use of the 3PL Diagnostic Suite shall be resolved in the courts of the State of Georgia."},
+];
+
+async function sendEmails({toEmail,toName,companyName,period,score,severity,summary,topPattern,breaks,escalationReason,totalExposure}) {
+ const breakList = (breaks||[]).map(b=>
+ `#${b.rank} ${b.title} [${b.severity?.toUpperCase()}]${b.amount?` - ${b.amount}`:""}\n${b.finding}\nAction: ${b.action}${b.escalate?"\nESCALATION FLAGGED":""}`
+ ).join("\n\n");
+
+ const reportBody = `3PL AI BREAK FINDER - JUDICIAL ENGINEERING
+Company: ${companyName||"Not provided"}
+Period: ${period||"Not provided"}
+Submitted by: ${toName} (${toEmail})
+Break Score: ${score} - ${severity?.toUpperCase()}
+Total Exposure: ${totalExposure||"N/A"}
+
+SUMMARY:
+${summary}
+
+TOP PATTERN:
+${topPattern}
+
+BREAKS:
+${breakList}
+
+${escalationReason?`ESCALATION:\n${escalationReason}`:""}
+
+Judicial Engineering - I Trace It Back - judicialengineering.com`;
+
+ try {
+ await fetch("https://api.emailjs.com/api/v1.0/email/send",{
+ method:"POST",
+ headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({
+ service_id:EMAILJS_SERVICE_ID,
+ template_id:EMAILJS_TEMPLATE_ID,
+ user_id:EMAILJS_PUBLIC_KEY,
+ template_params:{
+ to_email:toEmail,
+ to_name:toName,
+ cc_email:"judicialengineering@gmail.com",
+ company_name:companyName||"Not provided",
+ period:period||"Not provided",
+ break_score:score,
+ severity:severity?.toUpperCase(),
+ total_exposure:totalExposure||"N/A",
+ summary,
+ top_pattern:topPattern,
+ report_body:reportBody,
+ escalation_reason:escalationReason||"No escalations flagged.",
+ break_count:breaks?.length||0,
+ },
+ }),
+ });
+ } catch(e){console.warn("Email send failed:",e);}
+}
+
+function PulseRing({color}) {
+ return (
+ <span style={{position:"relative",display:"inline-block",width:10,height:10}}>
+ <span style={{position:"absolute",inset:0,borderRadius:"50%",background:color,animation:"ping 1.2s cubic-bezier(0,0,0.2,1) infinite",opacity:0.4}}/>
+ <span style={{position:"absolute",inset:2,borderRadius:"50%",background:color}}/>
+ </span>
+ );
+}
+
+function ScoreGauge({score}) {
+ const color = score>=70?JE.pink:score>=45?"#FF9800":JE.yellow;
+ const label = score>=70?"CRITICAL":score>=45?"ELEVATED":"MONITORED";
+ const r=54,cx=64,cy=64,circ=2*Math.PI*r,dash=(score/100)*circ;
+ return (
+ <div style={{textAlign:"center"}}>
+ <svg width={128} height={128} viewBox="0 0 128 128">
+ <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1C1C1E" strokeWidth={10}/>
+ <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={10}
+ strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+ transform="rotate(-90 64 64)" style={{transition:"stroke-dasharray 1.2s ease"}}/>
+ <text x={cx} y={cy-6} textAnchor="middle" fill={color}
+ style={{fontFamily:"'Courier New',monospace",fontSize:22,fontWeight:700}}>{score}</text>
+ <text x={cx} y={cy+14} textAnchor="middle" fill="#B0B0B0"
+ style={{fontFamily:"'Courier New',monospace",fontSize:9,letterSpacing:2}}>BREAK SCORE</text>
+ </svg>
+ <div style={{color,fontFamily:"'Courier New',monospace",fontSize:"0.75rem",letterSpacing:"0.2em",marginTop:-8}}>{label}</div>
+ </div>
+ );
+}
+
+function BreakCard({rank,title,severity,amount,finding,action,escalate}) {
+ const sevColor = severity==="critical"?JE.pink:severity==="high"?"#FF9800":JE.yellow;
+ return (
+ <div style={{background:JE.cardBg,border:`1px solid ${sevColor}33`,padding:"1.5rem",position:"relative",overflow:"hidden"}}>
+ <div style={{position:"absolute",top:0,left:0,width:3,height:"100%",background:sevColor}}/>
+ <div style={{paddingLeft:"0.75rem"}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:"1rem",flexWrap:"wrap",marginBottom:"0.6rem"}}>
+ <div style={{display:"flex",alignItems:"center",gap:"0.6rem"}}>
+ <span style={{background:sevColor,color:JE.dark,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",fontWeight:700,padding:"0.15rem 0.5rem"}}>#{rank}</span>
+ <span style={{color:JE.white,fontWeight:700,fontSize:"1rem"}}>{title}</span>
+ </div>
+ <div style={{display:"flex",gap:"0.5rem",alignItems:"center",flexWrap:"wrap"}}>
+ {amount&&<span style={{color:JE.yellow,fontFamily:"'Courier New',monospace",fontSize:"0.85rem",fontWeight:700}}>{amount}</span>}
+ <span style={{color:sevColor,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",border:`1px solid ${sevColor}55`,padding:"0.15rem 0.5rem",textTransform:"uppercase"}}>{severity}</span>
+ </div>
+ </div>
+ <p style={{color:JE.silver,fontSize:"0.88rem",lineHeight:1.7,margin:"0 0 0.75rem"}}>{finding}</p>
+ <div style={{background:JE.dark,padding:"0.75rem 1rem",borderLeft:`2px solid ${sevColor}55`}}>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.1em",marginBottom:"0.3rem",textTransform:"uppercase"}}>Recommended Action</div>
+ <div style={{color:JE.lightSilver,fontSize:"0.85rem",lineHeight:1.6}}>{action}</div>
+ </div>
+ {escalate&&(
+ <div style={{marginTop:"0.75rem",display:"flex",alignItems:"center",gap:"0.5rem"}}>
+ <PulseRing color={JE.pink}/>
+ <span style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem",letterSpacing:"0.08em",textTransform:"uppercase"}}>Escalation Flagged - Judicial Engineering</span>
+ </div>
+ )}
+ </div>
+ </div>
+ );
+}
+
+function TermsGate({onAccept}) {
+ const [checked,setChecked] = React.useState({});
+ const [scrolled,setScrolled] = React.useState(false);
+ const [attempted,setAttempted] = React.useState(false);
+ const allChecked = TERMS_SECTIONS.every((_,i)=>checked[i]);
+
+ const handleScroll = e => {
+ const el = e.target;
+ if(el.scrollTop+el.clientHeight>=el.scrollHeight-24) setScrolled(true);
+ };
+
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,display:"flex",alignItems:"center",justifyContent:"center",padding:"1.5rem"}}>
+ <div style={{maxWidth:600,width:"100%",background:JE.cardBg,border:`1px solid ${JE.pinkBorder}`,display:"flex",flexDirection:"column",maxHeight:"85vh"}}>
+ <div style={{background:JE.pink,padding:"1.5rem 2rem",flexShrink:0}}>
+ <div style={{color:JE.white,fontSize:"0.62rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.22em",marginBottom:"0.35rem",textTransform:"uppercase"}}>Judicial Engineering · AI Break Finder · Layer 3</div>
+ <div style={{color:JE.white,fontSize:"1.3rem",fontWeight:700,fontFamily:"Georgia,serif"}}>Data Use Agreement and Terms</div>
+ <div style={{color:JE.white,opacity:0.82,fontSize:"0.78rem",fontFamily:"'Courier New',monospace",marginTop:"0.25rem"}}>Read all sections. Check each box. Then proceed.</div>
+ </div>
+
+ {!scrolled&&(
+ <div style={{background:JE.pinkDim,borderBottom:`1px solid ${JE.pinkBorder}`,padding:"0.6rem 1.5rem",flexShrink:0}}>
+ <span style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem"}}>Scroll through all sections to unlock agreement</span>
+ </div>
+ )}
+
+ <div onScroll={handleScroll} style={{overflowY:"auto",padding:"1.5rem 2rem",flex:1}}>
+ {TERMS_SECTIONS.map((t,i)=>(
+ <div key={i} onClick={()=>setChecked(p=>({...p,[i]:!p[i]}))}
+ style={{display:"flex",gap:"0.85rem",alignItems:"flex-start",background:checked[i]?"rgba(0,230,118,0.06)":JE.dark,border:`1px solid ${checked[i]?"rgba(0,230,118,0.3)":"rgba(255,255,255,0.06)"}`,padding:"1rem 1.1rem",marginBottom:"0.75rem",cursor:"pointer",transition:"all 0.18s"}}>
+ <div style={{width:20,height:20,border:`2px solid ${checked[i]?JE.green:"rgba(255,255,255,0.3)"}`,background:checked[i]?JE.green:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.15s",marginTop:2}}>
+ {checked[i]&&<span style={{color:JE.dark,fontSize:"0.75rem",fontWeight:900}}>✓</span>}
+ </div>
+ <div style={{flex:1}}>
+ <div style={{color:checked[i]?JE.green:JE.lightSilver,fontFamily:"'Courier New',monospace",fontSize:"0.68rem",letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:700,marginBottom:"0.35rem",transition:"color 0.18s"}}>{String(i+1).padStart(2,"0")}. {t.title}</div>
+ <div style={{color:JE.silver,fontSize:"0.84rem",lineHeight:1.68}}>{t.body}</div>
+ </div>
+ </div>
+ ))}
+ <div style={{background:JE.dark,border:`1px solid rgba(255,215,0,0.15)`,padding:"1rem 1.25rem",marginTop:"0.5rem"}}>
+ <div style={{color:JE.yellow,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.1em",marginBottom:"0.35rem",textTransform:"uppercase"}}>After Your Analysis</div>
+ <div style={{color:JE.silver,fontSize:"0.82rem",lineHeight:1.6}}>A signed <strong style={{color:JE.white}}>Mutual Non-Disclosure Agreement</strong> is required before any paid consulting engagement begins. You will be prompted to request it after your results are delivered.</div>
+ </div>
+ </div>
+
+ <div style={{padding:"1.25rem 2rem",borderTop:`1px solid rgba(255,255,255,0.06)`,flexShrink:0}}>
+ {attempted&&!scrolled&&<div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem",marginBottom:"0.6rem"}}>Please scroll through all sections first.</div>}
+ {attempted&&scrolled&&!allChecked&&<div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem",marginBottom:"0.6rem"}}>Please check all {TERMS_SECTIONS.length} boxes to proceed. ({Object.values(checked).filter(Boolean).length}/{TERMS_SECTIONS.length} acknowledged)</div>}
+ <button onClick={()=>{setAttempted(true);if(scrolled&&allChecked)onAccept();}}
+ style={{background:allChecked&&scrolled?JE.pink:"#333",border:"none",color:JE.white,padding:"0.9rem",fontFamily:"'Courier New',monospace",fontSize:"0.82rem",cursor:allChecked&&scrolled?"pointer":"default",letterSpacing:"0.1em",textTransform:"uppercase",width:"100%",opacity:allChecked&&scrolled?1:0.45,transition:"all 0.2s"}}>
+ {allChecked&&scrolled?"I Agree - Proceed to Analysis":`${Object.values(checked).filter(Boolean).length}/${TERMS_SECTIONS.length} Sections Acknowledged`}
+ </button>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",marginTop:"0.6rem",lineHeight:1.5}}>Questions: judicialengineering@gmail.com</div>
+ </div>
+ </div>
+ </div>
+ );
+}
+
+function App() {
+ const [stage,setStage] = React.useState("terms");
+ const [pasteData,setPasteData] = React.useState("");
+ const [companyName,setCompanyName] = React.useState("");
+ const [monthPeriod,setMonthPeriod] = React.useState("");
+ const [scorecardScore,setScorecardScore] = React.useState("");
+ const [captureEmail,setCaptureEmail] = React.useState("");
+ const [captureName,setCaptureName] = React.useState("");
+ const [captureError,setCaptureError] = React.useState("");
+ const [analysis,setAnalysis] = React.useState(null);
+ const [error,setError] = React.useState("");
+ const [progress,setProgress] = React.useState(0);
+ const [emailSent,setEmailSent] = React.useState(false);
+
+ const handleRunAnalysis = async () => {
+ if(!captureEmail.trim()||!captureEmail.includes("@")){setCaptureError("Please enter a valid email address.");return;}
+ if(!captureName.trim()){setCaptureError("Please enter your name.");return;}
+ setCaptureError("");
+ setStage("analyzing");
+ setProgress(0);
+
+ const ticker = setInterval(()=>setProgress(p=>p>=90?90:p+Math.random()*12),400);
+
+ const systemPrompt = `You are the AI engine inside the 3PL Diagnostic Suite by Judicial Engineering, founded by Rebecca Thompson with the tagline "I Trace It Back." Analyze accessorial charge data and return ONLY valid JSON with no markdown, no backticks and no preamble.
+
+Return this exact structure:
+{
+ "breakScore": <integer 0-100>,
+ "severity": "<critical|elevated|monitored>",
+ "summary": "<2-3 sentence consultant-voice narrative>",
+ "totalExposure": "<formatted dollar string>",
+ "topPattern": "<single most important pattern>",
+ "breaks": [
+ {
+ "rank": 1,
+ "title": "<short break name>",
+ "severity": "<critical|high|moderate>",
+ "amount": "<dollar exposure or null>",
+ "finding": "<2-3 sentences - be concrete about clients, lanes and dollars>",
+ "action": "<specific actionable recommendation>",
+ "escalate": true
+ }
+ ],
+ "escalationReason": "<ALWAYS provide - 1-2 sentences why Judicial Engineering should be involved>",
+ "nextLayerPrompt": "<one sentence on what monthly subscription catches automatically>"
+}
+
+Rules: escalationReason is ALWAYS populated. escalate true on highest severity breaks. breakScore 70 and above is critical, 45 to 69 is elevated, under 45 is monitored. Sound like a seasoned freight ops consultant - direct and evidence-based.`;
+
+ const userPrompt = `Company: ${companyName||"Unnamed 3PL"}
+Period: ${monthPeriod||"Not specified"}
+Submitted by: ${captureName} (${captureEmail})
+${scorecardScore?`Layer 1 Score: ${scorecardScore}`:""}
+
+CHARGE DATA:
+${pasteData}`;
+
+ try {
+ const res = await fetch("https://api.anthropic.com/v1/messages",{
+ method:"POST",
+ headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({
+ model:"claude-sonnet-4-20250514",
+ max_tokens:1000,
+ system:systemPrompt,
+ messages:[{role:"user",content:userPrompt}],
+ }),
+ });
+ clearInterval(ticker);
+ setProgress(100);
+ const data = await res.json();
+ const raw = data.content?.find(b=>b.type==="text")?.text||"";
+ const parsed = JSON.parse(raw.replace(/```json|```/g,"").trim());
+ setAnalysis(parsed);
+ await sendEmails({
+ toEmail:captureEmail,toName:captureName,companyName,
+ period:monthPeriod,score:parsed.breakScore,severity:parsed.severity,
+ summary:parsed.summary,topPattern:parsed.topPattern,
+ breaks:parsed.breaks,escalationReason:parsed.escalationReason,
+ totalExposure:parsed.totalExposure,
+ });
+ setEmailSent(true);
+ setTimeout(()=>setStage("results"),400);
+ } catch(err){
+ clearInterval(ticker);
+ setError("Analysis failed. Please check your data and try again.");
+ setStage("input");
+ }
+ };
+
+ if(stage==="terms") return <TermsGate onAccept={()=>setStage("input")}/>;
+
+ if(stage==="analyzing") {
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Courier New',monospace",padding:"2rem"}}>
+ <div style={{maxWidth:480,width:"100%",textAlign:"center"}}>
+ <div style={{color:JE.pink,fontSize:"0.65rem",letterSpacing:"0.25em",marginBottom:"2.5rem",animation:"blink 1.4s infinite",textTransform:"uppercase"}}>
+ Judicial Engineering · AI Break Finder · Running
+ </div>
+ <div style={{height:2,background:"#1C1C1E",borderRadius:2,overflow:"hidden",marginBottom:"2rem"}}>
+ <div style={{height:"100%",background:JE.pink,width:`${progress}%`,transition:"width 0.4s ease",borderRadius:2}}/>
+ </div>
+ {[
+ [10,"Parsing charge data..."],
+ [30,"Identifying charge type patterns..."],
+ [50,"Cross-referencing client and lane exposure..."],
+ [68,"Scoring break severity..."],
+ [82,"Generating escalation package..."],
+ [92,"Sending your report..."],
+ ].map(([t,label])=>(
+ <div key={label} style={{color:progress>=t?JE.silver:JE.dim,fontSize:"0.78rem",letterSpacing:"0.05em",marginBottom:"0.5rem",transition:"color 0.4s"}}>
+ {progress>=t?"✓":"○"} {label}
+ </div>
+ ))}
+ <div style={{color:JE.dim,fontSize:"0.65rem",marginTop:"2rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>I Trace It Back.</div>
+ </div>
+ </div>
+ );
+ }
+
+ if(stage==="capture") {
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+ <div style={{maxWidth:480,width:"100%"}}>
+ <div style={{textAlign:"center",marginBottom:"2rem"}}>
+ <div style={{display:"inline-flex",alignItems:"center",gap:"0.5rem",marginBottom:"1.25rem"}}>
+ <PulseRing color={JE.green}/>
+ <span style={{color:JE.green,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.18em",textTransform:"uppercase"}}>Data Received - Ready to Analyze</span>
+ </div>
+ <h2 style={{color:JE.white,fontSize:"1.6rem",margin:"0 0 0.5rem",fontWeight:700,fontFamily:"Georgia,serif"}}>Where should we send your report?</h2>
+ <p style={{color:JE.silver,fontSize:"0.9rem",lineHeight:1.7,margin:0}}>Your full break analysis will be emailed instantly. Judicial Engineering receives a copy to review your escalations.</p>
+ </div>
+ <div style={{background:JE.cardBg,padding:"2rem",border:`1px solid rgba(255,255,255,0.06)`}}>
+ <div style={{display:"flex",flexDirection:"column",gap:"0.85rem",marginBottom:"1.25rem"}}>
+ {[["Your Name","captureName",captureName,setCaptureName,"First and last name","text"],
+ ["Work Email","captureEmail",captureEmail,setCaptureEmail,"you@yourcompany.com","email"]
+ ].map(([label,id,val,setter,ph,type])=>(
+ <div key={id} style={{display:"flex",flexDirection:"column",gap:"0.35rem"}}>
+ <label style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>{label}</label>
+ <input type={type} value={val} onChange={e=>setter(e.target.value)} placeholder={ph}
+ style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.1)`,color:JE.white,padding:"0.65rem 0.9rem",fontFamily:"Georgia,serif",fontSize:"0.9rem",outline:"none",width:"100%"}}/>
+ </div>
+ ))}
+ </div>
+ {captureError&&<div style={{background:JE.pinkDim,border:`1px solid ${JE.pinkBorder}`,color:JE.pink,padding:"0.6rem 0.85rem",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",marginBottom:"1rem"}}>{captureError}</div>}
+ <button onClick={handleRunAnalysis}
+ style={{background:JE.pink,border:"none",color:JE.white,padding:"1rem",fontFamily:"'Courier New',monospace",fontSize:"0.85rem",cursor:"pointer",letterSpacing:"0.12em",textTransform:"uppercase",width:"100%"}}>
+ Run Analysis and Send Report
+ </button>
+ <div style={{marginTop:"1rem",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",lineHeight:1.6}}>
+ Your data is used only to generate this diagnostic per the terms you agreed to. Judicial Engineering will follow up on flagged escalations.
+ </div>
+ </div>
+ <button onClick={()=>setStage("input")} style={{background:"transparent",border:"none",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.72rem",cursor:"pointer",marginTop:"1rem",letterSpacing:"0.05em",textTransform:"uppercase"}}>Back to data input</button>
+ </div>
+ </div>
+ );
+ }
+
+ if(stage==="results"&&analysis) {
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,padding:"1.5rem"}}>
+ <div style={{maxWidth:760,margin:"0 auto"}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"2rem",flexWrap:"wrap",gap:"0.75rem"}}>
+ <div>
+ <div style={{color:JE.pink,fontSize:"0.62rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.22em",marginBottom:"0.3rem",textTransform:"uppercase"}}>Judicial Engineering · AI Break Finder · Layer 3</div>
+ <h1 style={{color:JE.white,fontSize:"1.6rem",margin:0,fontWeight:700,fontFamily:"Georgia,serif"}}>{companyName||"3PL"} - Break Analysis</h1>
+ {monthPeriod&&<div style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.78rem",marginTop:4}}>{monthPeriod}</div>}
+ </div>
+ <div style={{display:"flex",gap:"0.6rem",alignItems:"center",flexWrap:"wrap"}}>
+ {emailSent&&<span style={{color:JE.green,fontFamily:"'Courier New',monospace",fontSize:"0.68rem"}}>✓ Report sent to {captureEmail}</span>}
+ <button onClick={()=>{setStage("input");setAnalysis(null);setPasteData("");}}
+ style={{background:"transparent",border:`1px solid rgba(255,255,255,0.2)`,color:JE.silver,padding:"0.5rem 1.25rem",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",cursor:"pointer",textTransform:"uppercase"}}>
+ New Analysis
+ </button>
+ </div>
+ </div>
+
+ <div style={{display:"flex",gap:"1.25rem",marginBottom:"1.25rem",flexWrap:"wrap"}}>
+ <div style={{background:JE.cardBg,padding:"1.5rem",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+ <ScoreGauge score={analysis.breakScore}/>
+ </div>
+ <div style={{background:JE.cardBg,padding:"1.5rem",flex:1,minWidth:220,display:"flex",flexDirection:"column",justifyContent:"space-between",gap:"1rem"}}>
+ <div>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:"0.5rem"}}>AI Diagnostic Summary</div>
+ <p style={{color:JE.lightSilver,lineHeight:1.75,fontSize:"0.92rem",margin:0}}>{analysis.summary}</p>
+ </div>
+ <div style={{display:"flex",gap:"1.5rem",flexWrap:"wrap"}}>
+ {analysis.totalExposure&&<div><div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Total Exposure</div><div style={{color:JE.yellow,fontFamily:"'Courier New',monospace",fontSize:"1.2rem",fontWeight:700}}>{analysis.totalExposure}</div></div>}
+ <div><div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Breaks Found</div><div style={{color:JE.white,fontFamily:"'Courier New',monospace",fontSize:"1.2rem",fontWeight:700}}>{analysis.breaks?.length||0}</div></div>
+ <div><div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Submitted By</div><div style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.85rem"}}>{captureName}</div></div>
+ </div>
+ </div>
+ </div>
+
+ {analysis.topPattern&&(
+ <div style={{background:JE.pinkDim,border:`1px solid ${JE.pinkBorder}`,padding:"1rem 1.5rem",marginBottom:"1.25rem",display:"flex",gap:"0.75rem",alignItems:"flex-start"}}>
+ <span style={{color:JE.pink,fontSize:"1rem",flexShrink:0,marginTop:2}}>◆</span>
+ <div>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.12em",marginBottom:"0.3rem",textTransform:"uppercase"}}>Top Pattern Detected</div>
+ <div style={{color:JE.lightSilver,fontSize:"0.92rem",lineHeight:1.6}}>{analysis.topPattern}</div>
+ </div>
+ </div>
+ )}
+
+ <div style={{marginBottom:"1.25rem"}}>
+ <div style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:"0.75rem"}}>Ranked Breaks - Highest Impact First</div>
+ <div style={{display:"flex",flexDirection:"column",gap:"0.75rem"}}>
+ {(analysis.breaks||[]).map(b=><BreakCard key={b.rank} {...b}/>)}
+ </div>
+ </div>
+
+ <div style={{background:JE.dark,border:`2px solid ${JE.pink}`,padding:"1.75rem",marginBottom:"1.25rem"}}>
+ <div style={{display:"flex",alignItems:"center",gap:"0.75rem",marginBottom:"1rem"}}>
+ <PulseRing color={JE.pink}/>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem",letterSpacing:"0.18em",textTransform:"uppercase"}}>Judicial Engineering Has Received This Report</div>
+ </div>
+ <p style={{color:JE.lightSilver,lineHeight:1.75,fontSize:"0.92rem",margin:"0 0 1.25rem"}}>{analysis.escalationReason}</p>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",alignItems:"center"}}>
+ <a href="/contact" style={{background:JE.pink,padding:"0.85rem 2rem",color:JE.white,textDecoration:"none",display:"inline-block"}}>
+ <div style={{fontFamily:"'Courier New',monospace",fontSize:"0.8rem",letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:700}}>Request a Trace The Break Session</div>
+ <div style={{fontFamily:"'Courier New',monospace",fontSize:"0.62rem",opacity:0.78,marginTop:3}}>judicialengineering.com/contact</div>
+ </a>
+ <div style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.75rem"}}>Rebecca reviews every submission personally.</div>
+ </div>
+ </div>
+
+ {analysis.nextLayerPrompt&&(
+ <div style={{background:JE.charcoal,padding:"1.25rem 1.5rem",marginBottom:"1.25rem",display:"flex",gap:"0.75rem",alignItems:"flex-start",border:`1px solid rgba(255,255,255,0.06)`,background:"#1C1C1E"}}>
+ <span style={{color:JE.yellow,fontSize:"0.9rem",flexShrink:0}}>⟳</span>
+ <div>
+ <div style={{color:JE.yellow,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.12em",marginBottom:"0.3rem",textTransform:"uppercase"}}>Next Month - Subscribe to AI Break Finder</div>
+ <div style={{color:JE.silver,fontSize:"0.85rem",lineHeight:1.6}}>{analysis.nextLayerPrompt}</div>
+ </div>
+ </div>
+ )}
+
+ <div style={{borderTop:`1px solid rgba(255,255,255,0.06)`,paddingTop:"1.25rem",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"0.5rem"}}>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Judicial Engineering · 3PL Diagnostic Suite · Layer 3 · I Trace It Back</div>
+ <button onClick={()=>window.print()} style={{background:"transparent",border:`1px solid rgba(255,255,255,0.1)`,color:JE.silver,padding:"0.4rem 1rem",fontFamily:"'Courier New',monospace",fontSize:"0.7rem",cursor:"pointer",textTransform:"uppercase"}}>Print Report</button>
+ </div>
+ </div>
+ </div>
+ );
+ }
+
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,padding:"1.5rem"}}>
+ <div style={{maxWidth:680,margin:"0 auto"}}>
+ <div style={{textAlign:"center",padding:"2.5rem 0 2rem"}}>
+ <div style={{display:"inline-flex",alignItems:"center",gap:"0.5rem",marginBottom:"1.5rem"}}>
+ <PulseRing color={JE.pink}/>
+ <span style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.22em",textTransform:"uppercase"}}>Judicial Engineering · Layer 3 · AI-Powered</span>
+ </div>
+ <h1 style={{color:JE.white,fontSize:"clamp(2rem,5vw,3rem)",fontWeight:700,margin:"0 0 0.75rem",lineHeight:1.1,fontFamily:"Georgia,serif"}}>AI Break Finder</h1>
+ <p style={{color:JE.silver,fontSize:"1rem",lineHeight:1.7,maxWidth:480,margin:"0 auto 0.5rem"}}>Upload or paste your accessorial charge data. The AI diagnoses every break, scores your exposure and sends the full report to your inbox.</p>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.72rem",letterSpacing:"0.08em",textTransform:"uppercase"}}>I Trace It Back.</div>
+ </div>
+
+ <div style={{background:JE.cardBg,padding:"2rem",marginBottom:"1rem"}}>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",marginBottom:"1.25rem"}}>
+ {[
+ ["Company / 3PL Name",companyName,setCompanyName,"e.g. Summit 3PL","text"],
+ ["Reporting Period",monthPeriod,setMonthPeriod,"e.g. March 2026","text"],
+ ["Layer 1 Score (optional)",scorecardScore,setScorecardScore,"e.g. 62","number"],
+ ].map(([label,val,setter,ph,type])=>(
+ <div key={label} style={{display:"flex",flexDirection:"column",gap:"0.35rem",flex:"1 1 180px"}}>
+ <label style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>{label}</label>
+ <input type={type} value={val} onChange={e=>setter(e.target.value)} placeholder={ph}
+ style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.1)`,color:JE.white,padding:"0.65rem 0.9rem",fontFamily:"Georgia,serif",fontSize:"0.9rem",outline:"none",width:"100%"}}/>
+ </div>
+ ))}
+ </div>
+
+ <div style={{marginBottom:"1.25rem"}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"0.5rem",flexWrap:"wrap",gap:"0.5rem"}}>
+ <label style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Charge Data - CSV or Plain Text</label>
+ <button onClick={()=>{setPasteData(SAMPLE_DATA);setCompanyName("Demo 3PL Co.");setMonthPeriod("Q1 2026");}}
+ style={{background:"transparent",border:`1px solid rgba(255,255,255,0.1)`,color:JE.silver,padding:"0.25rem 0.75rem",fontFamily:"'Courier New',monospace",fontSize:"0.65rem",cursor:"pointer",textTransform:"uppercase"}}>
+ Load Sample
+ </button>
+ </div>
+ <textarea value={pasteData} onChange={e=>setPasteData(e.target.value)} rows={10}
+ placeholder={`Paste CSV or describe charges in plain text.\n\ncharge_type,client,lane,count,amount,month\nDetention,Acme,Lane 7,8,1640.00,March`}
+ style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.08)`,color:JE.lightSilver,padding:"0.85rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",outline:"none",resize:"vertical",width:"100%",lineHeight:1.7}}/>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",marginTop:"0.4rem"}}>Include charge type, client, amount and frequency for best results.</div>
+ </div>
+
+ {error&&<div style={{background:JE.pinkDim,border:`1px solid ${JE.pinkBorder}`,color:JE.pink,padding:"0.75rem 1rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",marginBottom:"1rem"}}>{error}</div>}
+
+ <button onClick={()=>{if(pasteData.trim()){setError("");setStage("capture");}else setError("Please paste your charge data or load the sample first.");}}
+ style={{background:pasteData.trim()?JE.pink:"#333",border:"none",color:JE.white,padding:"1rem",fontFamily:"'Courier New',monospace",fontSize:"0.85rem",cursor:pasteData.trim()?"pointer":"default",letterSpacing:"0.12em",textTransform:"uppercase",width:"100%",opacity:pasteData.trim()?1:0.5,transition:"all 0.2s"}}>
+ Analyze My Breaks
+ </button>
+ </div>
+
+ <div style={{display:"flex",gap:"0.6rem",flexWrap:"wrap",marginBottom:"2rem"}}>
+ {["Scores your total break exposure 0-100","Identifies and ranks every charge pattern","Recommends specific corrective actions","Report emailed to you instantly"].map(t=>(
+ <div key={t} style={{flex:"1 1 240px",display:"flex",gap:"0.5rem",alignItems:"flex-start"}}>
+ <span style={{color:JE.pink,fontSize:"0.6rem",marginTop:4,flexShrink:0}}>◆</span>
+ <span style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.72rem",lineHeight:1.5}}>{t}</span>
+ </div>
+ ))}
+ </div>
+
+ <div style={{textAlign:"center",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",paddingBottom:"1rem",textTransform:"uppercase"}}>
+ Judicial Engineering · 3PL Diagnostic Suite · Layer 3 · I Trace It Back
+ </div>
+ </div>
+ </div>
+ );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+
+</body>
+</html>
