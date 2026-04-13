@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contact - Judicial Engineering</title>
+<meta name="description" content="Get in touch with Judicial Engineering. Start a free diagnostic or talk to Rebecca about a consulting engagement."/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#090909;color:#d0d0d0;font-family:‘DM Sans’,Georgia,sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;background:rgba(9,9,9,0.95);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{display:flex;flex-direction:column;gap:2px;text-decoration:none}
+.nav-name{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.nav-tag{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.55rem;color:#FF2D78;letter-spacing:0.15em}
+.nav-links{display:flex;gap:2rem;align-items:center;list-style:none}
+.nav-links a{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.1em;color:#888;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:#FF2D78}
+.nav-cta{background:#FF2D78!important;color:#fff!important;padding:0.5rem 1.25rem;transition:box-shadow 0.2s!important}
+.nav-cta:hover{box-shadow:0 0 20px rgba(255,45,120,0.5)!important}
+
+.page-header{padding:10rem 2.5rem 5rem;background:#090909;position:relative;overflow:hidden}
+.page-header-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,45,120,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,45,120,0.04) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 100% at 20% 50%,black 20%,transparent 100%);mask-image:radial-gradient(ellipse 80% 100% at 20% 50%,black 20%,transparent 100%)}
+.page-header-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto}
+.page-eyebrow{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.22em;color:#FF2D78;text-transform:uppercase;margin-bottom:1.25rem}
+.page-title{font-family:‘Playfair Display’,Georgia,serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:900;color:#fff;line-height:0.95;margin-bottom:1.5rem}
+.page-title em{font-style:normal;color:#FF2D78}
+.page-sub{font-size:1.1rem;color:#777;max-width:480px;line-height:1.8}
+
+.section-label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.22em;color:#FF2D78;text-transform:uppercase;margin-bottom:1rem}
+.section-title{font-family:‘Playfair Display’,Georgia,serif;font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;color:#fff;line-height:1.1;margin-bottom:1.25rem}
+
+/* MAIN CONTACT SECTION */
+.contact-main{padding:6rem 2.5rem;background:#111113;border-top:1px solid rgba(255,255,255,0.04)}
+.contact-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:5rem;align-items:start}
+
+.contact-info{position:sticky;top:6rem}
+.contact-info-label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.22em;color:#FF2D78;text-transform:uppercase;margin-bottom:1rem}
+.contact-info-title{font-family:‘Playfair Display’,Georgia,serif;font-size:1.8rem;font-weight:700;color:#fff;line-height:1.15;margin-bottom:1.25rem}
+.contact-info-body{color:#777;font-size:0.95rem;line-height:1.8;margin-bottom:2.5rem}
+
+.contact-detail{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:2.5rem}
+.contact-detail-item{display:flex;align-items:flex-start;gap:0.85rem}
+.detail-icon{color:#FF2D78;font-size:1rem;margin-top:2px;flex-shrink:0}
+.detail-text{display:flex;flex-direction:column;gap:2px}
+.detail-label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-transform:uppercase}
+.detail-value{color:#d0d0d0;font-size:0.9rem}
+.detail-value a{color:#d0d0d0;text-decoration:none;transition:color 0.2s}
+.detail-value a:hover{color:#FF2D78}
+
+.response-note{background:#090909;border:1px solid rgba(255,255,255,0.05);border-left:3px solid #FF2D78;padding:1.25rem 1.5rem}
+.response-label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#FF2D78;text-transform:uppercase;margin-bottom:0.4rem}
+.response-text{font-size:0.84rem;color:#666;line-height:1.6}
+
+/* FORM */
+.contact-form-wrap{background:#090909;border:1px solid rgba(255,255,255,0.05);padding:2.5rem}
+.form-header{margin-bottom:2rem}
+.form-header-label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.15em;color:#FF2D78;text-transform:uppercase;margin-bottom:0.5rem}
+.form-header-title{font-family:‘Playfair Display’,Georgia,serif;font-size:1.3rem;font-weight:700;color:#fff}
+
+.form-group{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.25rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:0}
+.form-row .form-group{margin-bottom:1.25rem}
+label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.65rem;letter-spacing:0.1em;color:#666;text-transform:uppercase}
+input,select,textarea{background:#111113;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:0.75rem 1rem;font-family:‘DM Sans’,Georgia,sans-serif;font-size:0.92rem;outline:none;width:100%;transition:border-color 0.2s;font-weight:300}
+input:focus,select:focus,textarea:focus{border-color:rgba(255,45,120,0.5)}
+select option{background:#111113}
+textarea{resize:vertical;min-height:120px;line-height:1.6}
+
+.form-nda-note{background:#111113;border:1px solid rgba(255,215,0,0.15);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;gap:0.75rem;align-items:flex-start}
+.nda-icon{color:#FFD600;font-size:0.85rem;flex-shrink:0;margin-top:2px}
+.nda-text{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.68rem;color:#666;line-height:1.6;letter-spacing:0.02em}
+.nda-text strong{color:#FFD600}
+
+.form-submit{background:#FF2D78;color:#fff;padding:1rem;font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;width:100%;transition:box-shadow 0.2s,transform 0.2s}
+.form-submit:hover{box-shadow:0 0 24px rgba(255,45,120,0.45);transform:translateY(-1px)}
+
+.form-success{display:none;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);padding:1.5rem;text-align:center}
+.form-success.visible{display:block}
+.success-icon{font-size:2rem;margin-bottom:0.75rem}
+.success-title{font-family:‘Playfair Display’,Georgia,serif;font-size:1.2rem;font-weight:700;color:#00E676;margin-bottom:0.5rem}
+.success-text{font-size:0.86rem;color:#666;line-height:1.6}
+
+/* TOOLS */
+.tools-section{padding:6rem 2.5rem;background:#090909}
+.tools-inner{max-width:1100px;margin:0 auto}
+.tools-header{margin-bottom:3rem}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(255,255,255,0.04)}
+.tool-card{background:#111113;padding:2rem;text-decoration:none;display:block;position:relative;overflow:hidden;transition:background 0.2s}
+.tool-card::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:#FF2D78;transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease}
+.tool-card:hover{background:#161618}
+.tool-card:hover::after{transform:scaleX(1)}
+.tool-free{display:inline-block;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);color:#00E676;font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.56rem;letter-spacing:0.1em;padding:0.2rem 0.6rem;text-transform:uppercase;margin-bottom:1rem}
+.tool-layer{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.58rem;letter-spacing:0.15em;color:#FF2D78;text-transform:uppercase;margin-bottom:0.75rem}
+.tool-icon{font-size:1.6rem;margin-bottom:0.75rem;display:block}
+.tool-title{font-family:‘Playfair Display’,Georgia,serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:0.5rem}
+.tool-desc{font-size:0.82rem;color:#666;line-height:1.7;margin-bottom:1rem}
+.tool-cta{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.1em;color:#FF2D78;text-transform:uppercase}
+
+footer{background:#111113;border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+.footer-brand .footer-name{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.7rem;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.footer-brand .footer-tag{display:block;font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.55rem;letter-spacing:0.14em;color:#FF2D78;margin-top:3px}
+.footer-links{display:flex;gap:2rem;list-style:none;flex-wrap:wrap}
+.footer-links a{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.footer-links a:hover{color:#fff}
+.footer-copy{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.56rem;letter-spacing:0.08em;color:#333}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+nav{padding:1rem 1.5rem}
+.nav-links{display:none}
+.page-header{padding:8rem 1.5rem 4rem}
+.contact-inner{grid-template-columns:1fr;gap:3rem}
+.contact-info{position:static}
+.form-row{grid-template-columns:1fr}
+.tools-grid{grid-template-columns:1fr}
+.contact-main,.tools-section{padding:5rem 1.5rem}
+footer{padding:2rem 1.5rem}
+.footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+ <a href="/" class="nav-brand" style="text-decoration:none">
+ <span class="nav-name">Judicial Engineering</span>
+ <span class="nav-tag">I Trace It Back.</span>
+ </a>
+ <ul class="nav-links">
+ <li><a href="/#suite">The Suite</a></li>
+ <li><a href="/#how">How It Works</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/contact" class="active nav-cta">Contact</a></li>
+ </ul>
+</nav>
+
+<div class="page-header">
+ <div class="page-header-grid"></div>
+ <div class="page-header-inner">
+ <div class="page-eyebrow">Get In Touch</div>
+ <h1 class="page-title">Let's talk<br/>about your<br/><em>breaks.</em></h1>
+ <p class="page-sub">Whether you want to run a free diagnostic, book a Trace The Break session or just ask a question, this is the right place to start.</p>
+ </div>
+</div>
+
+<section class="contact-main">
+ <div class="contact-inner">
+ <div class="contact-info reveal">
+ <div class="contact-info-label">Direct Contact</div>
+ <h2 class="contact-info-title">Rebecca reviews every message personally.</h2>
+ <p class="contact-info-body">There is no support queue here. When you reach out to Judicial Engineering, you are reaching Rebecca directly. Expect a response within one business day.</p>
+
+```
+ <div class="contact-detail">
+ <div class="contact-detail-item">
+ <span class="detail-icon"> </span>
+ <div class="detail-text">
+ <span class="detail-label">Email</span>
+ <span class="detail-value"><a href="mailto:judicialengineering@gmail.com">judicialengineering@gmail.com</a></span>
+ </div>
+ </div>
+ <div class="contact-detail-item">
+ <span class="detail-icon">◎</span>
+ <div class="detail-text">
+ <span class="detail-label">Location</span>
+ <span class="detail-value">Atlanta, GA · Serving clients nationally</span>
+ </div>
+ </div>
+ <div class="contact-detail-item">
+ <span class="detail-icon">◆</span>
+ <div class="detail-text">
+ <span class="detail-label">Response Time</span>
+ <span class="detail-value">Within one business day</span>
+ </div>
+ </div>
+ </div>
+
+ <div class="response-note">
+ <div class="response-label">Consulting Engagements</div>
+ <p class="response-text">All Trace The Break sessions and paid consulting engagements begin with a signed Mutual Non-Disclosure Agreement. The NDA will be sent to you before any confidential information is exchanged.</p>
+ </div>
+</div>
+
+<div class="reveal">
+ <div class="contact-form-wrap">
+ <div class="form-header">
+ <div class="form-header-label">Send a Message</div>
+ <div class="form-header-title">Tell us what you are working on.</div>
+ </div>
+
+ <form id="contactForm">
+ <div class="form-row">
+ <div class="form-group">
+ <label for="firstName">First Name</label>
+ <input type="text" id="firstName" name="firstName" placeholder="Rebecca" required/>
+ </div>
+ <div class="form-group">
+ <label for="lastName">Last Name</label>
+ <input type="text" id="lastName" name="lastName" placeholder="Thompson" required/>
+ </div>
+ </div>
+
+ <div class="form-group">
+ <label for="email">Work Email</label>
+ <input type="email" id="email" name="email" placeholder="you@yourcompany.com" required/>
+ </div>
+
+ <div class="form-group">
+ <label for="company">Company Name</label>
+ <input type="text" id="company" name="company" placeholder="Your 3PL, brokerage or company"/>
+ </div>
+
+ <div class="form-group">
+ <label for="reason">What brings you here?</label>
+ <select id="reason" name="reason">
+ <option value="">Select one...</option>
+ <option value="trace-the-break">Trace The Break engagement</option>
+ <option value="white-glove">White Glove Mindset workshop</option>
+ <option value="dispatch">Dispatch Your Power program</option>
+ <option value="diagnostic">Question about the Diagnostic Suite</option>
+ <option value="other">Something else</option>
+ </select>
+ </div>
+
+ <div class="form-group">
+ <label for="message">Message</label>
+ <textarea id="message" name="message" placeholder="Tell us what you are seeing. What charge patterns are appearing? What has been tried? What does the team need?" required></textarea>
+ </div>
+
+ <div class="form-nda-note">
+ <span class="nda-icon"> </span>
+ <p class="nda-text">Please do not include specific client names, carrier details or proprietary data in this form. A <strong>Mutual Non-Disclosure Agreement</strong> will be sent before any sensitive information is exchanged.</p>
+ </div>
+
+ <button type="submit" class="form-submit">Send Message</button>
+ </form>
+
+ <div class="form-success" id="formSuccess">
+ <div class="success-icon">✓</div>
+ <div class="success-title">Message Received</div>
+ <p class="success-text">Rebecca will be in touch within one business day. If your engagement requires an NDA, it will be included in the response.</p>
+ </div>
+ </div>
+</div>
+```
+
+ </div>
+</section>
+
+<section class="tools-section">
+ <div class="tools-inner">
+ <div class="tools-header reveal">
+ <div class="section-label">Not Ready to Talk Yet?</div>
+ <h2 class="section-title">Start with a free diagnostic.<br/>The data will tell the story.</h2>
+ </div>
+ <div class="tools-grid reveal">
+ <a href="/diagnostic" class="tool-card">
+ <span class="tool-free">Free Always</span>
+ <div class="tool-layer">Layer 01 · Scorecard</div>
+ <span class="tool-icon"> </span>
+ <div class="tool-title">Accessorial Diagnostic Scorecard</div>
+ <p class="tool-desc">20 questions. A scored picture of exactly where your process is breaking.</p>
+ <div class="tool-cta">Start Diagnostic</div>
+ </a>
+ <a href="/break-report" class="tool-card">
+ <span class="tool-free">Free Always</span>
+ <div class="tool-layer">Layer 02 · Monthly Report</div>
+ <span class="tool-icon"> </span>
+ <div class="tool-title">Monthly Break Report</div>
+ <p class="tool-desc">Build the monthly reporting rhythm that makes patterns impossible to ignore.</p>
+ <div class="tool-cta">Open Report</div>
+ </a>
+ <a href="/break-finder" class="tool-card">
+ <span class="tool-free">Free Beta</span>
+ <div class="tool-layer">Layer 03 · AI-Powered</div>
+ <span class="tool-icon"> </span>
+ <div class="tool-title">AI Break Finder</div>
+ <p class="tool-desc">Upload your charge data. Get a full diagnostic report emailed to you instantly.</p>
+ <div class="tool-cta">Run AI Analysis</div>
+ </a>
+ </div>
+ </div>
+</section>
+
+<footer>
+ <div class="footer-inner">
+ <div class="footer-brand">
+ <span class="footer-name">Judicial Engineering</span>
+ <span class="footer-tag">I Trace It Back.</span>
+ </div>
+ <ul class="footer-links">
+ <li><a href="/#suite">Diagnostic Suite</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/contact">Contact</a></li>
+ </ul>
+ <div class="footer-copy">© 2026 Judicial Engineering · Atlanta, GA</div>
+ </div>
+</footer>
+
+<script>
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver((entries)=>{
+ entries.forEach((e,i)=>{
+ if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*80);
+ });
+},{threshold:0.08});
+reveals.forEach(el=>obs.observe(el));
+
+window.addEventListener('scroll',()=>{
+ document.querySelector('nav').style.borderBottomColor=
+ window.scrollY>50?'rgba(255,45,120,0.2)':'rgba(255,255,255,0.06)';
+});
+
+document.getElementById('contactForm').addEventListener('submit',function(e){
+ e.preventDefault();
+ const data=new FormData(this);
+ const subject=encodeURIComponent('JE Contact Form - '+data.get('reason'));
+ const body=encodeURIComponent(
+ 'Name: '+data.get('firstName')+' '+data.get('lastName')+'\n'+
+ 'Email: '+data.get('email')+'\n'+
+ 'Company: '+(data.get('company')||'Not provided')+'\n'+
+ 'Reason: '+data.get('reason')+'\n\n'+
+ 'Message:\n'+data.get('message')
+ );
+ window.location.href='mailto:judicialengineering@gmail.com?subject='+subject+'&body='+body;
+ this.style.display='none';
+ document.getElementById('formSuccess').classList.add('visible');
+});
+</script>
+
+</body>
+</html>
