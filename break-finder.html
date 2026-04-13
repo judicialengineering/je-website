@@ -83,11 +83,10 @@ footer{padding:2rem 1.5rem}
 <script type="text/babel">
 
 // ── EMAILJS CREDENTIALS ──
-// Replace these three values with your real credentials before uploading to GitHub
-// Do NOT share these values publicly
-const EMAILJS_SERVICE_ID = "service_988ltds"; // e.g. service_xxxxxxx
-const EMAILJS_TEMPLATE_ID = "template_az2gnuc"; // your template ID
-const EMAILJS_PUBLIC_KEY = "OdBrBXj01P0oEjzmi"; // from EmailJS Account > API Keys
+// Replace these two values with your real credentials before uploading to GitHub
+const EMAILJS_SERVICE_ID = "service_988ltds";
+const EMAILJS_TEMPLATE_ID = "template_az2gnuc";
+const EMAILJS_PUBLIC_KEY = ""OdBrBXj01P0oEjzmi";
 
 const JE = {
  dark:"#0D0D0D", charcoal:"#1C1C1E", pink:"#FF2D78",
@@ -353,7 +352,7 @@ CHARGE DATA:
 ${pasteData}`;
 
  try {
- const res = await fetch("https://api.anthropic.com/v1/messages",{
+ const res = await fetch("/api/analyze",{
  method:"POST",
  headers:{"Content-Type":"application/json"},
  body:JSON.stringify({
