@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Accessorial Diagnostic Scorecard - Judicial Engineering</title>
+<meta name="description" content="20 questions. 5 categories. A scored map of exactly where your accessorial process is breaking and how badly."/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#090909;color:#d0d0d0;font-family:Georgia,serif;line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;background:rgba(9,9,9,0.95);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{display:flex;flex-direction:column;gap:2px;text-decoration:none}
+.nav-name{font-family:‘Courier New’,monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.nav-tag{font-family:‘Courier New’,monospace;font-size:0.55rem;color:#FF2D78;letter-spacing:0.15em}
+.nav-links{display:flex;gap:2rem;align-items:center;list-style:none}
+.nav-links a{font-family:‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.1em;color:#888;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:#FF2D78!important;color:#fff!important;padding:0.5rem 1.25rem}
+
+#root{padding-top:68px}
+
+footer{background:#111113;border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem;margin-top:0}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+.footer-name{font-family:‘Courier New’,monospace;font-size:0.7rem;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.footer-tag{display:block;font-family:‘Courier New’,monospace;font-size:0.55rem;letter-spacing:0.14em;color:#FF2D78;margin-top:3px}
+.footer-links{display:flex;gap:2rem;list-style:none;flex-wrap:wrap}
+.footer-links a{font-family:‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-decoration:none;text-transform:uppercase}
+.footer-links a:hover{color:#fff}
+.footer-copy{font-family:‘Courier New’,monospace;font-size:0.56rem;letter-spacing:0.08em;color:#333}
+
+@media(max-width:900px){
+nav{padding:1rem 1.5rem}
+.nav-links{display:none}
+footer{padding:2rem 1.5rem}
+.footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+ <a href="/" class="nav-brand">
+ <span class="nav-name">Judicial Engineering</span>
+ <span class="nav-tag">I Trace It Back.</span>
+ </a>
+ <ul class="nav-links">
+ <li><a href="/#suite">The Suite</a></li>
+ <li><a href="/#how">How It Works</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/contact" class="nav-cta">Contact</a></li>
+ </ul>
+</nav>
+
+<div id="root"></div>
+
+<footer>
+ <div class="footer-inner">
+ <div>
+ <span class="footer-name">Judicial Engineering</span>
+ <span class="footer-tag">I Trace It Back.</span>
+ </div>
+ <ul class="footer-links">
+ <li><a href="/#suite">Diagnostic Suite</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/contact">Contact</a></li>
+ </ul>
+ <div class="footer-copy">© 2026 Judicial Engineering · Atlanta, GA</div>
+ </div>
+</footer>
+
+<script type="text/babel">
+const JE = {
+ charcoal: "#1a1a1a", dark: "#111111", pink: "#FF2D78",
+ silver: "#C0C0C0", lightSilver: "#e8e8e8", white: "#ffffff",
+ yellow: "#FFD600", green: "#00E676", dim: "#555555", cardBg: "#161618",
+};
+
+const sections = [
+ {
+ id:"volume", title:"Charge Volume and Frequency", icon:" ",
+ description:"How often are accessorial charges appearing and are you tracking them?",
+ questions:[
+ {id:"v1",text:"Do you track accessorial charges separately from base freight charges in your billing system?",weight:3},
+ {id:"v2",text:"Can you pull a report showing accessorial charges by charge type in under 10 minutes?",weight:2},
+ {id:"v3",text:"Do you know which charge types appear most frequently across your top 5 clients?",weight:3},
+ {id:"v4",text:"Has the volume of accessorial charges increased in the last 90 days?",weight:2,inverse:true},
+ ],
+ },
+ {
+ id:"contract", title:"Contract Alignment", icon:" ",
+ description:"Are the charges you are billing actually supported by what is in the contract?",
+ questions:[
+ {id:"c1",text:"Does every accessorial charge type you bill have a corresponding line in the client contract or rate schedule?",weight:4},
+ {id:"c2",text:"When a new accessorial charge type appears, do you verify contract coverage before billing?",weight:3},
+ {id:"c3",text:"Have you reviewed your accessorial rate schedule against actual charges in the last 6 months?",weight:3},
+ {id:"c4",text:"Do clients ever dispute accessorial charges citing contract language?",weight:3,inverse:true},
+ ],
+ },
+ {
+ id:"rootcause", title:"Root Cause Visibility", icon:" ",
+ description:"Can you trace why a charge happened and not just that it happened?",
+ questions:[
+ {id:"r1",text:"When a detention charge appears, can you identify the specific event that caused it?",weight:4},
+ {id:"r2",text:"Do ops and billing teams communicate about repeat charge patterns before they escalate?",weight:3},
+ {id:"r3",text:"Have you identified which clients or lanes generate the most accessorial charges?",weight:3},
+ {id:"r4",text:"Are the same charge types appearing repeatedly without a corrective action being taken?",weight:4,inverse:true},
+ ],
+ },
+ {
+ id:"dispute", title:"Dispute and Recovery Process", icon:" ",
+ description:"When charges are wrong or disputed, do you have a process or are you winging it?",
+ questions:[
+ {id:"d1",text:"Do you have a documented process for disputing carrier-billed accessorial charges?",weight:3},
+ {id:"d2",text:"Do you track the outcome of disputes (won, lost, credited) in a centralized log?",weight:3},
+ {id:"d3",text:"Can you calculate your dispute win rate in the last quarter?",weight:2},
+ {id:"d4",text:"Are disputes often resolved informally or verbally without documentation?",weight:3,inverse:true},
+ ],
+ },
+ {
+ id:"communication", title:"Client Communication", icon:" ",
+ description:"Can you explain accessorial charges to your clients clearly and before they ask?",
+ questions:[
+ {id:"cc1",text:"Do clients receive proactive notification when a new accessorial charge type is being billed?",weight:3},
+ {id:"cc2",text:"Do you include accessorial charge summaries in regular client reporting?",weight:3},
+ {id:"cc3",text:"Do you have standard language or templates for explaining accessorial charges to clients?",weight:2},
+ {id:"cc4",text:"Have clients expressed frustration or confusion about accessorial charges in the last 6 months?",weight:3,inverse:true},
+ ],
+ },
+];
+
+const allQuestions = sections.flatMap(s => s.questions);
+
+function getScore(answers, questions) {
+ let earned = 0, possible = 0;
+ questions.forEach(q => {
+ possible += q.weight * 2;
+ const ans = answers[q.id];
+ if (ans === undefined) return;
+ if (q.inverse) {
+ if (ans === "no") earned += q.weight * 2;
+ else if (ans === "partial") earned += q.weight;
+ } else {
+ if (ans === "yes") earned += q.weight * 2;
+ else if (ans === "partial") earned += q.weight;
+ }
+ });
+ return possible > 0 ? Math.round((earned / possible) * 100) : 0;
+}
+
+function getRating(score) {
+ if (score >= 80) return { label:"CONTROLLED", color:JE.green, desc:"Your accessorial process is structured. You are ready for optimization." };
+ if (score >= 55) return { label:"LEAKING", color:JE.yellow, desc:"You have process in some areas but critical gaps are costing you money." };
+ return { label:"BROKEN", color:JE.pink, desc:"Significant revenue is leaking through unmanaged accessorial charges." };
+}
+
+function TermsCheck({ onAccept }) {
+ const [checked, setChecked] = React.useState(false);
+ const [attempted, setAttempted] = React.useState(false);
+
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"Georgia,serif",padding:"2rem"}}>
+ <div style={{maxWidth:560,width:"100%"}}>
+ <div style={{textAlign:"center",marginBottom:"2.5rem"}}>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.25em",marginBottom:"1.25rem",textTransform:"uppercase"}}>
+ Judicial Engineering · 3PL Diagnostic Suite · Layer 1
+ </div>
+ <h1 style={{color:JE.white,fontSize:"2rem",fontWeight:700,margin:"0 0 0.5rem",fontFamily:"Georgia,serif"}}>Accessorial Diagnostic Scorecard</h1>
+ <p style={{color:JE.silver,fontSize:"0.9rem",lineHeight:1.7,margin:0}}>Before we begin, please review how your data is handled.</p>
+ </div>
+
+ <div style={{background:JE.cardBg,border:`1px solid rgba(255,255,255,0.08)`,padding:"2rem",marginBottom:"1rem"}}>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.15em",marginBottom:"1.25rem",textTransform:"uppercase"}}>Data Use Notice</div>
+ {[
+ ["Your Responses Are Confidential","Your answers to this diagnostic are treated as confidential business information. Judicial Engineering will not share your responses with any third party."],
+ ["Who Sees This","Rebecca Thompson (Founder, Judicial Engineering) may review diagnostic results to follow up on escalations or offer consulting services. You may opt out of follow-up at any time."],
+ ["No Trade Secrets Required","This scorecard does not ask for specific client names, dollar amounts or identifying operational data. It asks only operational yes, no and partial questions."],
+ ["Full NDA Available","If you engage Judicial Engineering for consulting services, a full signed Mutual Non-Disclosure Agreement will be executed before any confidential data is shared."],
+ ["Intellectual Property","The scoring methodology, diagnostic framework and report structure are proprietary to Judicial Engineering. Your responses and results are yours."],
+ ].map(([title, body]) => (
+ <div key={title} style={{marginBottom:"1rem",paddingBottom:"1rem",borderBottom:`1px solid rgba(255,255,255,0.06)`}}>
+ <div style={{color:JE.lightSilver,fontFamily:"'Courier New',monospace",fontSize:"0.7rem",fontWeight:700,letterSpacing:"0.05em",marginBottom:"0.35rem"}}>{title}</div>
+ <div style={{color:JE.silver,fontSize:"0.85rem",lineHeight:1.65}}>{body}</div>
+ </div>
+ ))}
+
+ <div onClick={() => setChecked(p => !p)} style={{display:"flex",gap:"0.85rem",alignItems:"flex-start",cursor:"pointer",padding:"1rem",background:checked?`rgba(0,230,118,0.06)`:JE.dark,border:`1px solid ${checked?"rgba(0,230,118,0.3)":"rgba(255,255,255,0.1)"}`,transition:"all 0.2s",marginTop:"0.5rem"}}>
+ <div style={{width:22,height:22,border:`2px solid ${checked?JE.green:"rgba(255,255,255,0.3)"}`,background:checked?JE.green:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.15s",marginTop:1}}>
+ {checked && <span style={{color:JE.dark,fontSize:"0.8rem",fontWeight:900}}>✓</span>}
+ </div>
+ <div style={{color:checked?JE.lightSilver:JE.silver,fontSize:"0.88rem",lineHeight:1.6,transition:"color 0.2s"}}>
+ I have read and understood the above. I acknowledge that my responses are confidential, that Judicial Engineering may contact me regarding my results and that a full Mutual NDA will be provided before any consulting engagement involving sensitive data.
+ </div>
+ </div>
+
+ {attempted && !checked && (
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.72rem",marginTop:"0.75rem"}}>
+ Please acknowledge the data use notice to continue.
+ </div>
+ )}
+ </div>
+
+ <button onClick={() => { setAttempted(true); if (checked) onAccept(); }}
+ style={{background:checked?JE.pink:"#333",border:"none",color:JE.white,padding:"1rem",fontFamily:"'Courier New',monospace",fontSize:"0.85rem",cursor:checked?"pointer":"default",letterSpacing:"0.12em",textTransform:"uppercase",width:"100%",opacity:checked?1:0.5,transition:"all 0.2s"}}>
+ I Acknowledge - Begin Diagnostic
+ </button>
+
+ <div style={{textAlign:"center",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",marginTop:"1rem",letterSpacing:"0.08em"}}>
+ JUDICIAL ENGINEERING · I TRACE IT BACK · judicialengineering.com
+ </div>
+ </div>
+ </div>
+ );
+}
+
+function App() {
+ const [stage, setStage] = React.useState("terms");
+ const [answers, setAnswers] = React.useState({});
+ const [activeSection, setActiveSection] = React.useState(0);
+
+ const totalAnswered = Object.keys(answers).length;
+ const totalQuestions = allQuestions.length;
+ const progress = Math.round((totalAnswered / totalQuestions) * 100);
+ const overallScore = getScore(answers, allQuestions);
+ const rating = getRating(overallScore);
+ const setAnswer = (qid, val) => setAnswers(p => ({ ...p, [qid]: val }));
+ const sectionScore = s => getScore(answers, s.questions);
+ const sectionAnswered = s => s.questions.every(q => answers[q.id] !== undefined);
+ const section = sections[activeSection];
+
+ if (stage === "terms") return <TermsCheck onAccept={() => setStage("scorecard")} />;
+
+ if (stage === "results") {
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,fontFamily:"Georgia,serif",padding:"2rem"}}>
+ <div style={{maxWidth:700,margin:"0 auto"}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"2.5rem",flexWrap:"wrap",gap:"1rem"}}>
+ <div style={{color:JE.pink,fontSize:"0.65rem",letterSpacing:"0.22em",fontFamily:"'Courier New',monospace",textTransform:"uppercase"}}>Judicial Engineering · Layer 1 Results</div>
+ <button onClick={() => setStage("scorecard")} style={{background:"transparent",border:`1px solid rgba(255,255,255,0.2)`,color:JE.silver,padding:"0.4rem 1rem",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",cursor:"pointer"}}>Edit Answers</button>
+ </div>
+
+ <div style={{background:JE.cardBg,border:`2px solid ${rating.color}`,padding:"2.5rem",marginBottom:"1.5rem",textAlign:"center"}}>
+ <div style={{fontSize:"0.7rem",letterSpacing:"0.2em",fontFamily:"'Courier New',monospace",color:JE.silver,textTransform:"uppercase",marginBottom:"1rem"}}>Overall Score</div>
+ <div style={{fontSize:"5rem",fontWeight:700,color:rating.color,lineHeight:1,marginBottom:"0.5rem",fontFamily:"Georgia,serif"}}>{overallScore}</div>
+ <div style={{fontSize:"1.5rem",color:rating.color,fontFamily:"'Courier New',monospace",letterSpacing:"0.2em",marginBottom:"1rem"}}>{rating.label}</div>
+ <p style={{color:JE.silver,margin:0,fontSize:"1rem",lineHeight:1.6}}>{rating.desc}</p>
+ </div>
+
+ <div style={{display:"flex",flexDirection:"column",gap:"0.75rem",marginBottom:"2rem"}}>
+ {sections.map(s => {
+ const sc = sectionScore(s);
+ const r = getRating(sc);
+ return (
+ <div key={s.id} style={{background:JE.cardBg,padding:"1.25rem 1.5rem",display:"flex",alignItems:"center",gap:"1.25rem",flexWrap:"wrap"}}>
+ <span style={{fontSize:"1.4rem"}}>{s.icon}</span>
+ <div style={{flex:1,minWidth:120}}>
+ <div style={{color:JE.white,fontSize:"0.9rem",marginBottom:"0.3rem"}}>{s.title}</div>
+ <div style={{height:4,background:JE.dark,borderRadius:2,overflow:"hidden"}}>
+ <div style={{height:"100%",width:`${sc}%`,background:r.color,borderRadius:2,transition:"width 1s ease"}} />
+ </div>
+ </div>
+ <div style={{color:r.color,fontFamily:"'Courier New',monospace",fontSize:"0.8rem",minWidth:70,textAlign:"right"}}>{sc}%</div>
+ </div>
+ );
+ })}
+ </div>
+
+ <div style={{marginBottom:"2.5rem"}}>
+ <div style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:"0.75rem"}}>Where The Breaks Are</div>
+ <div style={{display:"flex",flexDirection:"column",gap:"0.6rem"}}>
+ {allQuestions
+ .filter(q => { const a = answers[q.id]; return q.inverse ? a === "yes" : a === "no"; })
+ .sort((a, b) => b.weight - a.weight)
+ .slice(0, 6)
+ .map(q => (
+ <div key={q.id} style={{background:`rgba(255,45,120,0.08)`,border:`1px solid rgba(255,45,120,0.2)`,padding:"1rem 1.25rem",display:"flex",gap:"1rem",alignItems:"flex-start"}}>
+ <span style={{color:JE.pink,fontSize:"1rem",marginTop:2}}>✗</span>
+ <span style={{color:JE.lightSilver,fontSize:"0.88rem",lineHeight:1.5,flex:1}}>{q.text}</span>
+ <span style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.68rem",whiteSpace:"nowrap",marginTop:3}}>P{q.weight}</span>
+ </div>
+ ))
+ }
+ {allQuestions.filter(q => { const a = answers[q.id]; return q.inverse ? a === "yes" : a === "no"; }).length === 0 && (
+ <div style={{color:JE.green,fontFamily:"'Courier New',monospace",fontSize:"0.9rem"}}>No critical breaks detected.</div>
+ )}
+ </div>
+ </div>
+
+ <div style={{background:JE.pink,padding:"2rem 2.5rem",textAlign:"center"}}>
+ <div style={{color:JE.white,fontSize:"0.65rem",letterSpacing:"0.2em",fontFamily:"'Courier New',monospace",marginBottom:"0.75rem",opacity:0.85,textTransform:"uppercase"}}>Next Step</div>
+ <div style={{color:JE.white,fontSize:"1.2rem",fontWeight:700,marginBottom:"0.75rem",fontFamily:"Georgia,serif"}}>
+ {overallScore < 55 ? "Your breaks need a Trace The Break engagement." : overallScore < 80 ? "Run the monthly Break Report to track your fixes." : "You are ready for the AI Break Finder."}
+ </div>
+ <div style={{display:"flex",gap:"1rem",justifyContent:"center",flexWrap:"wrap",marginTop:"1rem"}}>
+ <a href="/break-report" style={{background:"rgba(255,255,255,0.15)",color:JE.white,padding:"0.6rem 1.5rem",fontFamily:"'Courier New',monospace",fontSize:"0.72rem",letterSpacing:"0.08em",textTransform:"uppercase",textDecoration:"none"}}>Layer 2 - Break Report</a>
+ <a href="/contact" style={{background:"rgba(255,255,255,0.15)",color:JE.white,padding:"0.6rem 1.5rem",fontFamily:"'Courier New',monospace",fontSize:"0.72rem",letterSpacing:"0.08em",textTransform:"uppercase",textDecoration:"none"}}>Talk to Rebecca</a>
+ </div>
+ <div style={{color:JE.white,opacity:0.7,fontFamily:"'Courier New',monospace",fontSize:"0.72rem",marginTop:"1rem"}}>judicialengineering.com · I Trace It Back.</div>
+ </div>
+ </div>
+ </div>
+ );
+ }
+
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,fontFamily:"Georgia,serif",padding:"1.5rem"}}>
+ <div style={{maxWidth:680,margin:"0 auto"}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"1.5rem",flexWrap:"wrap",gap:"0.75rem"}}>
+ <div style={{color:JE.pink,fontSize:"0.62rem",letterSpacing:"0.22em",fontFamily:"'Courier New',monospace",textTransform:"uppercase"}}>Judicial Engineering · Layer 1</div>
+ <div style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.75rem"}}>{totalAnswered}/{totalQuestions} answered</div>
+ </div>
+
+ <div style={{height:3,background:"#1a1a1a",marginBottom:"1.75rem",borderRadius:2,overflow:"hidden"}}>
+ <div style={{height:"100%",width:`${progress}%`,background:JE.pink,borderRadius:2,transition:"width 0.4s ease"}} />
+ </div>
+
+ <div style={{display:"flex",gap:"0.4rem",marginBottom:"1.75rem",flexWrap:"wrap"}}>
+ {sections.map((s, i) => {
+ const done = sectionAnswered(s);
+ const active = i === activeSection;
+ return (
+ <button key={s.id} onClick={() => setActiveSection(i)}
+ style={{background:active?JE.pink:done?`rgba(255,45,120,0.15)`:"#161618",border:active?"none":done?`1px solid rgba(255,45,120,0.4)`:`1px solid rgba(255,255,255,0.1)`,color:active?JE.white:done?JE.pink:JE.silver,padding:"0.4rem 0.85rem",fontFamily:"'Courier New',monospace",fontSize:"0.68rem",cursor:"pointer",transition:"all 0.15s"}}>
+ {s.icon} {s.title.split(" ")[0]}{done && !active && " ✓"}
+ </button>
+ );
+ })}
+ </div>
+
+ <div style={{marginBottom:"1.75rem"}}>
+ <div style={{fontSize:"0.62rem",color:JE.pink,fontFamily:"'Courier New',monospace",letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:"0.4rem"}}>Section {activeSection + 1} of {sections.length}</div>
+ <h2 style={{fontSize:"1.5rem",color:JE.white,margin:"0 0 0.4rem",fontWeight:700,fontFamily:"Georgia,serif"}}>{section.icon} {section.title}</h2>
+ <p style={{color:JE.silver,fontSize:"0.88rem",margin:0,lineHeight:1.6}}>{section.description}</p>
+ </div>
+
+ <div style={{display:"flex",flexDirection:"column",gap:"1rem",marginBottom:"1.75rem"}}>
+ {section.questions.map((q, qi) => {
+ const ans = answers[q.id];
+ return (
+ <div key={q.id} style={{background:"#161618",padding:"1.5rem",border:ans?`1px solid rgba(255,45,120,0.3)`:`1px solid rgba(255,255,255,0.06)`,transition:"border 0.2s"}}>
+ <div style={{color:JE.silver,fontSize:"0.62rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",marginBottom:"0.5rem",opacity:0.6}}>
+ Q{(activeSection * 4) + qi + 1} · {"●".repeat(q.weight)}{"○".repeat(4 - q.weight)}
+ </div>
+ <p style={{color:JE.white,fontSize:"0.93rem",lineHeight:1.65,margin:"0 0 1.1rem"}}>{q.text}</p>
+ <div style={{display:"flex",gap:"0.6rem",flexWrap:"wrap"}}>
+ {["yes","partial","no"].map(opt => {
+ const selected = ans === opt;
+ const optColor = opt === "yes" ? JE.green : opt === "partial" ? JE.yellow : JE.pink;
+ return (
+ <button key={opt} onClick={() => setAnswer(q.id, opt)}
+ style={{background:selected?optColor:"transparent",border:`1px solid ${selected?optColor:optColor+"88"}`,color:selected?JE.dark:optColor,padding:"0.5rem 1.25rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer",fontWeight:selected?700:400,transition:"all 0.15s"}}>
+ {opt === "yes" ? "Yes" : opt === "partial" ? "Partially" : "No"}
+ </button>
+ );
+ })}
+ </div>
+ </div>
+ );
+ })}
+ </div>
+
+ <div style={{display:"flex",justifyContent:"space-between",gap:"1rem",flexWrap:"wrap"}}>
+ <button onClick={() => setActiveSection(p => Math.max(0, p - 1))} disabled={activeSection === 0}
+ style={{background:"transparent",border:`1px solid rgba(255,255,255,0.2)`,color:activeSection===0?"rgba(255,255,255,0.2)":JE.silver,padding:"0.75rem 1.5rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:activeSection===0?"default":"pointer"}}>
+ Previous
+ </button>
+ {activeSection < sections.length - 1 ? (
+ <button onClick={() => setActiveSection(p => p + 1)}
+ style={{background:sectionAnswered(section)?JE.pink:"#333",border:"none",color:JE.white,padding:"0.75rem 2rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase",opacity:sectionAnswered(section)?1:0.45,transition:"all 0.2s"}}>
+ Next Section
+ </button>
+ ) : (
+ <button onClick={() => { if (totalAnswered >= Math.floor(totalQuestions * 0.7)) setStage("results"); }}
+ style={{background:totalAnswered>=Math.floor(totalQuestions*0.7)?JE.pink:"#333",border:"none",color:JE.white,padding:"0.75rem 2rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:totalAnswered>=Math.floor(totalQuestions*0.7)?"pointer":"default",letterSpacing:"0.08em",textTransform:"uppercase",opacity:totalAnswered>=Math.floor(totalQuestions*0.7)?1:0.45,transition:"all 0.2s"}}>
+ Get My Results
+ </button>
+ )}
+ </div>
+
+ {totalAnswered < Math.floor(totalQuestions * 0.7) && activeSection === sections.length - 1 && (
+ <p style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.75rem",textAlign:"right",marginTop:"0.75rem",opacity:0.6}}>
+ Answer at least {Math.floor(totalQuestions * 0.7)} questions to see results
+ </p>
+ )}
+
+ <div style={{textAlign:"center",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",marginTop:"2.5rem",paddingBottom:"1rem",textTransform:"uppercase"}}>
+ Judicial Engineering · 3PL Diagnostic Suite · Layer 1 · I Trace It Back
+ </div>
+ </div>
+ </div>
+ );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>
