@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>About - Judicial Engineering</title>
+<meta name="description" content="Rebecca Thompson founded Judicial Engineering after 20 years of operations experience across telecommunications, manufacturing, construction and freight."/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#090909;color:#d0d0d0;font-family:‘DM Sans’,Georgia,sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;background:rgba(9,9,9,0.95);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{display:flex;flex-direction:column;gap:2px;text-decoration:none}
+.nav-name{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.nav-tag{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.55rem;color:#FF2D78;letter-spacing:0.15em}
+.nav-links{display:flex;gap:2rem;align-items:center;list-style:none}
+.nav-links a{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.1em;color:#888;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:#FF2D78}
+.nav-cta{background:#FF2D78!important;color:#fff!important;padding:0.5rem 1.25rem;transition:box-shadow 0.2s!important}
+.nav-cta:hover{box-shadow:0 0 20px rgba(255,45,120,0.5)!important}
+
+.page-header{padding:10rem 2.5rem 5rem;background:#090909;position:relative;overflow:hidden}
+.page-header-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,45,120,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,45,120,0.04) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 100% at 20% 50%,black 20%,transparent 100%);mask-image:radial-gradient(ellipse 80% 100% at 20% 50%,black 20%,transparent 100%)}
+.page-header-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto}
+.page-eyebrow{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.22em;color:#FF2D78;text-transform:uppercase;margin-bottom:1.25rem}
+.page-title{font-family:‘Playfair Display’,Georgia,serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:900;color:#fff;line-height:0.95;margin-bottom:1.5rem}
+.page-title em{font-style:normal;color:#FF2D78}
+.page-sub{font-size:1.1rem;color:#777;max-width:500px;line-height:1.8}
+
+.section-label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.22em;color:#FF2D78;text-transform:uppercase;margin-bottom:1rem}
+.section-title{font-family:‘Playfair Display’,Georgia,serif;font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:700;color:#fff;line-height:1.1;margin-bottom:1.25rem}
+.section-body{color:#777;font-size:0.98rem;line-height:1.85;max-width:580px}
+
+.origin{padding:6rem 2.5rem;background:#111113;border-top:1px solid rgba(255,255,255,0.04)}
+.origin-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:5rem;align-items:start}
+.origin-pull{position:sticky;top:6rem}
+.pull-line{width:40px;height:2px;background:#FF2D78;margin-bottom:1rem}
+.pull-quote{font-family:‘Playfair Display’,Georgia,serif;font-size:1.6rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:1.5rem}
+.pull-quote em{font-style:normal;color:#FF2D78}
+.pull-attr{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.12em;color:#FF2D78;text-transform:uppercase}
+.origin-body p{color:#777;font-size:0.98rem;line-height:1.9;margin-bottom:1.5rem}
+.origin-body p:last-child{margin-bottom:0}
+.origin-body strong{color:#d0d0d0;font-weight:500}
+
+.experience{padding:6rem 2.5rem;background:#090909}
+.experience-inner{max-width:1100px;margin:0 auto}
+.experience-header{margin-bottom:3.5rem}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(255,255,255,0.04)}
+.exp-card{background:#111113;padding:2rem}
+.exp-number{font-family:‘Playfair Display’,Georgia,serif;font-size:3rem;font-weight:900;color:#FF2D78;line-height:1;margin-bottom:0.5rem}
+.exp-label{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.65rem;letter-spacing:0.1em;color:#FF2D78;text-transform:uppercase;margin-bottom:0.75rem}
+.exp-desc{font-size:0.86rem;color:#666;line-height:1.7}
+
+.career{padding:6rem 2.5rem;background:#111113;border-top:1px solid rgba(255,255,255,0.04)}
+.career-inner{max-width:1100px;margin:0 auto}
+.career-header{margin-bottom:3.5rem}
+.career-list{display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,0.04)}
+.career-item{background:#090909;padding:2rem 2.5rem;display:grid;grid-template-columns:200px 1fr;gap:2rem;align-items:start}
+.career-company{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.7rem;letter-spacing:0.1em;color:#FF2D78;text-transform:uppercase;line-height:1.4}
+.career-industry{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.08em;color:#444;text-transform:uppercase;margin-top:4px}
+.career-desc{font-size:0.88rem;color:#666;line-height:1.75}
+.career-desc strong{color:#d0d0d0;font-weight:500}
+
+.methodology{padding:6rem 2.5rem;background:#090909}
+.methodology-inner{max-width:1100px;margin:0 auto}
+.methodology-header{margin-bottom:3.5rem;max-width:600px}
+.method-list{display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,0.04)}
+.method-item{background:#111113;padding:2rem 2.5rem;display:grid;grid-template-columns:80px 1fr;gap:2rem;align-items:start}
+.method-num{font-family:‘Playfair Display’,Georgia,serif;font-size:2.5rem;font-weight:900;color:rgba(255,45,120,0.2);line-height:1}
+.method-title{font-family:‘Playfair Display’,Georgia,serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:0.5rem}
+.method-desc{font-size:0.86rem;color:#666;line-height:1.7}
+
+.who{padding:6rem 2.5rem;background:#111113;border-top:1px solid rgba(255,255,255,0.04)}
+.who-inner{max-width:1100px;margin:0 auto}
+.who-header{margin-bottom:3.5rem}
+.who-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(255,255,255,0.04)}
+.who-card{background:#090909;padding:2.5rem;position:relative;overflow:hidden}
+.who-card::before{content:’’;position:absolute;top:0;left:0;width:3px;height:100%;background:#FF2D78}
+.who-title{font-family:‘Playfair Display’,Georgia,serif;font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:0.75rem}
+.who-desc{font-size:0.86rem;color:#666;line-height:1.75}
+
+.about-cta{padding:6rem 2.5rem;background:#090909;text-align:center}
+.about-cta-inner{max-width:600px;margin:0 auto}
+.about-cta-title{font-family:‘Playfair Display’,Georgia,serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:#fff;line-height:1.05;margin-bottom:1.25rem}
+.about-cta-sub{color:#777;font-size:0.98rem;line-height:1.8;margin-bottom:2.5rem}
+.cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+.btn-primary{background:#FF2D78;color:#fff;padding:1rem 2.5rem;font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;display:inline-block;transition:box-shadow 0.2s,transform 0.2s}
+.btn-primary:hover{box-shadow:0 0 32px rgba(255,45,120,0.5);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:#888;padding:1rem 2.5rem;font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(255,255,255,0.14);display:inline-block;transition:color 0.2s,border-color 0.2s}
+.btn-outline:hover{color:#fff;border-color:rgba(255,255,255,0.35)}
+.cta-note{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#444;text-transform:uppercase}
+
+footer{background:#111113;border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+.footer-brand .footer-name{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.7rem;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.footer-brand .footer-tag{display:block;font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.55rem;letter-spacing:0.14em;color:#FF2D78;margin-top:3px}
+.footer-links{display:flex;gap:2rem;list-style:none;flex-wrap:wrap}
+.footer-links a{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.footer-links a:hover{color:#fff}
+.footer-copy{font-family:‘DM Mono’,‘Courier New’,monospace;font-size:0.56rem;letter-spacing:0.08em;color:#333}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+nav{padding:1rem 1.5rem}
+.nav-links{display:none}
+.page-header{padding:8rem 1.5rem 4rem}
+.origin-inner{grid-template-columns:1fr;gap:3rem}
+.origin-pull{position:static}
+.exp-grid,.who-grid{grid-template-columns:1fr}
+.career-item{grid-template-columns:1fr}
+.method-item{grid-template-columns:1fr}
+.method-num{font-size:1.5rem}
+.origin,.experience,.career,.methodology,.who,.about-cta{padding:5rem 1.5rem}
+footer{padding:2rem 1.5rem}
+.footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+ <a href="/" class="nav-brand" style="text-decoration:none">
+ <span class="nav-name">Judicial Engineering</span>
+ <span class="nav-tag">I Trace It Back.</span>
+ </a>
+ <ul class="nav-links">
+ <li><a href="/#suite">The Suite</a></li>
+ <li><a href="/#how">How It Works</a></li>
+ <li><a href="/about" class="active">About</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/contact" class="nav-cta">Contact</a></li>
+ </ul>
+</nav>
+
+<div class="page-header">
+ <div class="page-header-grid"></div>
+ <div class="page-header-inner">
+ <div class="page-eyebrow">About Judicial Engineering</div>
+ <h1 class="page-title">Built to find<br/>what others<br/><em>miss.</em></h1>
+ <p class="page-sub">Judicial Engineering was built on 20 years of operations experience across multiple industries and the same observation in every one of them: the break was always there. Nobody had built a system to see it.</p>
+ </div>
+</div>
+
+<section class="origin">
+ <div class="origin-inner">
+ <div class="origin-pull reveal">
+ <div class="pull-line"></div>
+ <div class="pull-quote">The problem was never the industry. It was that nobody built a system to <em>trace it back.</em></div>
+ <div class="pull-attr">Rebecca Thompson · Founder</div>
+ </div>
+ <div class="origin-body reveal">
+ <p><strong>Rebecca Thompson</strong> has spent 20 years inside operations across telecommunications, manufacturing, security systems, construction and freight. The industries changed. The pattern did not.</p>
+ <p>Every organization had complexity. Every organization had high-value accounts that required a different level of attention. And in every organization, there were breaks in the process that nobody had named yet. Revenue leaking through gaps between departments. Communication failures that looked like operational failures. Problems that kept recurring because nobody had traced them back to their actual source.</p>
+ <p>Judicial Engineering was founded to do that one thing systematically. Not as a consultant who parachutes in with a generic framework, but as someone who has sat inside these operations, managed the escalations, built the training and seen firsthand what breaks and why.</p>
+ <p>The freight focus came from the last five years working in freight brokerage, freight audit and reconciliation and freight operations. Freight is where accessorial charges create the most visible and most recoverable financial damage. It is also where the gap between ops and billing is widest and most costly.</p>
+ <p><strong>I Trace It Back</strong> is the operating principle behind everything Judicial Engineering does. Evidence first. Root cause second. System fix third.</p>
+ </div>
+ </div>
+</section>
+
+<section class="experience">
+ <div class="experience-inner">
+ <div class="experience-header reveal">
+ <div class="section-label">Experience</div>
+ <h2 class="section-title">20 years of operations.<br/>5 years in freight.<br/>One methodology.</h2>
+ </div>
+ <div class="exp-grid reveal">
+ <div class="exp-card">
+ <div class="exp-number">20</div>
+ <div class="exp-label">Years in Operations</div>
+ <p class="exp-desc">Two decades across customer service, sales, training development and operations management in telecommunications, manufacturing, security systems and construction before bringing that lens to freight.</p>
+ </div>
+ <div class="exp-card">
+ <div class="exp-number">5</div>
+ <div class="exp-label">Years in Freight</div>
+ <p class="exp-desc">Freight brokerage, freight audit and reconciliation and freight operations account management. Cradle-to-grave brokerage, high-value customer cost management and OTR operations.</p>
+ </div>
+ <div class="exp-card">
+ <div class="exp-number">1</div>
+ <div class="exp-label">Core Methodology</div>
+ <p class="exp-desc">Across every industry and every role, the same approach: surface the evidence, name the break, trace it back to its root cause and build a system that stops it from recurring.</p>
+ </div>
+ </div>
+ </div>
+</section>
+
+<section class="career">
+ <div class="career-inner">
+ <div class="career-header reveal">
+ <div class="section-label">Career Background</div>
+ <h2 class="section-title">The industries behind<br/>the diagnostic.</h2>
+ </div>
+ <div class="career-list reveal">
+ <div class="career-item">
+ <div>
+ <div class="career-company">Telecommunications</div>
+ </div>
+ <p class="career-desc">Customer service, business and government operations, <strong>white glove account management</strong> and escalation handling for high-value clients. First exposure to the gap between what customers experience and what internal teams know about it.</p>
+ </div>
+ <div class="career-item">
+ <div>
+ <div class="career-company">Bronze Manufacturing and Signage</div>
+ </div>
+ <p class="career-desc">Project management, quotes and production monitoring for high-value customers. <strong>Built the training program from scratch.</strong> First experience creating process infrastructure where none existed.</p>
+ </div>
+ <div class="career-item">
+ <div>
+ <div class="career-company">Security Systems</div>
+ </div>
+ <p class="career-desc">Tech dispatch and customer service. Coordinating field operations and managing client communication in a time-sensitive environment where process failures had immediate consequences.</p>
+ </div>
+ <div class="career-item">
+ <div>
+ <div class="career-company">Construction</div>
+ </div>
+ <p class="career-desc">PM support, bids, quotes, insurance documentation and subcontractor review. First point of contact for a complex operation with multiple moving parts and high accountability requirements.</p>
+ </div>
+ <div class="career-item">
+ <div>
+ <div class="career-company">Freight Brokerage</div>
+ </div>
+ <p class="career-desc">Cradle-to-grave brokerage, account management and <strong>white glove service</strong> for high-value freight clients. Full lifecycle exposure to freight relationships and where they break.</p>
+ </div>
+ <div class="career-item">
+ <div>
+ <div class="career-company">Freight Audit and Reconciliation</div>
+ </div>
+ <p class="career-desc"><strong>Freight audit and reconciliation</strong>, high-value customer management and cost and payment oversight. The direct foundation of the accessorial diagnostic methodology that powers the 3PL Diagnostic Suite.</p>
+ </div>
+ <div class="career-item">
+ <div>
+ <div class="career-company">Freight Operations</div>
+ </div>
+ <p class="career-desc">Account management with a focus on OTR solutions for complex freight accounts. Delivered operational solutions before leaving to build Judicial Engineering full time.</p>
+ </div>
+ </div>
+ </div>
+</section>
+
+<section class="methodology">
+ <div class="methodology-inner">
+ <div class="methodology-header reveal">
+ <div class="section-label">The Methodology</div>
+ <h2 class="section-title">How we think about<br/>every problem.</h2>
+ <p class="section-body">The same four-step logic applies whether we are running a 90-day Trace The Break engagement or reviewing a single invoice. Evidence first. Root cause second. System fix third. Prevention fourth.</p>
+ </div>
+ <div class="method-list reveal">
+ <div class="method-item">
+ <div class="method-num">01</div>
+ <div>
+ <div class="method-title">Surface the Evidence</div>
+ <p class="method-desc">Before any recommendation, we look at the data. Charge patterns, invoice history, contract terms and operational records. The break is already in there. We find it.</p>
+ </div>
+ </div>
+ <div class="method-item">
+ <div class="method-num">02</div>
+ <div>
+ <div class="method-title">Name the Break</div>
+ <p class="method-desc">Most operational problems are unnamed. A charge keeps appearing and nobody has said out loud what is causing it. Naming the break is the first act of fixing it.</p>
+ </div>
+ </div>
+ <div class="method-item">
+ <div class="method-num">03</div>
+ <div>
+ <div class="method-title">Trace It Back</div>
+ <p class="method-desc">Every charge has a root cause. We trace it back past the symptom to the process failure, the communication gap or the contract misalignment that created it.</p>
+ </div>
+ </div>
+ <div class="method-item">
+ <div class="method-num">04</div>
+ <div>
+ <div class="method-title">Build the Fix</div>
+ <p class="method-desc">The fix is not a one-time correction. It is a system your team can run. SOPs, reporting cadences, escalation paths and training that make the break visible before it costs you again.</p>
+ </div>
+ </div>
+ </div>
+ </div>
+</section>
+
+<section class="who">
+ <div class="who-inner">
+ <div class="who-header reveal">
+ <div class="section-label">Who We Work With</div>
+ <h2 class="section-title">Built for the operators<br/>doing the real work.</h2>
+ </div>
+ <div class="who-grid reveal">
+ <div class="who-card">
+ <div class="who-title">3PL Providers</div>
+ <p class="who-desc">Operations and billing teams managing multiple clients and carrier relationships. The complexity is real. The breaks are expensive. The 3PL Diagnostic Suite was built for exactly this environment.</p>
+ </div>
+ <div class="who-card">
+ <div class="who-title">Freight Brokerages</div>
+ <p class="who-desc">Brokers managing carrier networks and client expectations simultaneously. When accessorial charges hit both sides of a transaction, the damage compounds fast.</p>
+ </div>
+ <div class="who-card">
+ <div class="who-title">Shippers</div>
+ <p class="who-desc">Companies shipping freight who cannot get a clear answer on why their accessorial costs keep climbing. The data is in your invoices. We help you read it.</p>
+ </div>
+ </div>
+ </div>
+</section>
+
+<section class="about-cta">
+ <div class="about-cta-inner reveal">
+ <div class="section-label" style="text-align:center">Ready to Start</div>
+ <h2 class="about-cta-title">Run the diagnostic.<br/>See the break.</h2>
+ <p class="about-cta-sub">Start free with the Accessorial Diagnostic Scorecard. No credit card and no commitment. Just a clear picture of where your operation is losing money.</p>
+ <div class="cta-actions">
+ <a href="/diagnostic" class="btn-primary">Run Free Diagnostic</a>
+ <a href="/contact" class="btn-outline">Talk to Rebecca</a>
+ </div>
+ <div class="cta-note">Every AI submission reviewed personally · NDA provided for all consulting engagements</div>
+ </div>
+</section>
+
+<footer>
+ <div class="footer-inner">
+ <div class="footer-brand">
+ <span class="footer-name">Judicial Engineering</span>
+ <span class="footer-tag">I Trace It Back.</span>
+ </div>
+ <ul class="footer-links">
+ <li><a href="/#suite">Diagnostic Suite</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/contact">Contact</a></li>
+ </ul>
+ <div class="footer-copy">© 2026 Judicial Engineering · Atlanta, GA</div>
+ </div>
+</footer>
+
+<script>
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver((entries)=>{
+ entries.forEach((e,i)=>{
+ if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*80);
+ });
+},{threshold:0.08});
+reveals.forEach(el=>obs.observe(el));
+window.addEventListener('scroll',()=>{
+ document.querySelector('nav').style.borderBottomColor=
+ window.scrollY>50?'rgba(255,45,120,0.2)':'rgba(255,255,255,0.06)';
+});
+</script>
+
+</body>
+</html>
