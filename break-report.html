@@ -332,7 +332,45 @@ function App() {
 
  <div style={{marginTop:"1.5rem",display:"flex",gap:"0.75rem",flexWrap:"wrap"}}>
  <button onClick={()=>setStage("form")} style={{background:"transparent",border:`1px solid rgba(255,255,255,0.2)`,color:JE.silver,padding:"0.75rem 1.5rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer"}}>Edit Report</button>
- <button onClick={()=>window.print()} style={{background:JE.pink,border:"none",color:JE.white,padding:"0.75rem 2rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>Print / Export</button>
+ <button onClick={()=>window.print()} style={{background:"#1a1a1a",border:`1px solid rgba(255,255,255,0.2)`,color:JE.white,padding:"0.75rem 2rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>Print Report</button>
+ <button onClick={()=>{
+ const rows = [
+ ["Break Report","Judicial Engineering - I Trace It Back"],
+ ["Period",`${month} ${year}${period?" - "+period:""}`],
+ ["Client",clientName||""],
+ ["Prepared By",preparedBy||""],
+ ["Reviewed By",reviewedBy||""],
+ ["Scorecard Rating",scorecardRating||"Not run"],
+ ["Scorecard Score",scorecardScore||""],
+ ["Scorecard Notes",scorecardNotes||""],
+ [],
+ ["CHARGE LOG"],
+ ["Charge Type","Client / Lane","Count","Amount","Root Cause","Status","Billed to Client"],
+ ...charges.filter(c=>c.type).map(c=>[c.type,c.client,c.count,c.totalAmount,c.rootCause,c.status,c.billedToClient]),
+ [],
+ ["DISPUTE TRACKER"],
+ ["Charge Type","Carrier","Disputed Amount","Outcome","Recovered","Notes"],
+ ...disputes.filter(d=>d.chargeType).map(d=>[d.chargeType,d.carrier,d.amount,d.outcome,d.recovered,d.reason]),
+ [],
+ ["OPERATIONS ANALYSIS"],
+ ["Repeat Patterns",repeatPatterns||""],
+ ["Root Cause Summary",rootCauseSummary||""],
+ ["Corrective Actions",correctiveActions||""],
+ [],
+ ["CLIENT SUMMARY"],
+ ["Trend",clientTrend],
+ ["What We Want You To Know",clientHighlight||""],
+ ["Action Required",clientAction||""],
+ ];
+ const csv = rows.map(r=>r.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(",")).join("\n");
+ const blob = new Blob([csv],{type:"text/csv"});
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement("a");
+ a.href = url;
+ a.download = `JE-Break-Report-${month}-${year}.csv`;
+ a.click();
+ URL.revokeObjectURL(url);
+ }} style={{background:JE.pink,border:"none",color:JE.white,padding:"0.75rem 2rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>Export CSV</button>
  </div>
  </div>
  </div>
