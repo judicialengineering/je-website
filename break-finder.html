@@ -9,42 +9,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script><style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:#090909;color:#d0d0d0;font-family:Georgia,serif;line-height:1.6;overflow-x:hidden}
-
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;background:rgba(9,9,9,0.95);border-bottom:1px solid rgba(255,255,255,0.06)}
 .nav-brand{display:flex;flex-direction:column;gap:2px;text-decoration:none}
-.nav-name{font-family:‘Courier New’,monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
-.nav-tag{font-family:‘Courier New’,monospace;font-size:0.55rem;color:#FF2D78;letter-spacing:0.15em}
+.nav-name{font-family:'Courier New',monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.nav-tag{font-family:'Courier New',monospace;font-size:0.55rem;color:#FF2D78;letter-spacing:0.15em}
 .nav-links{display:flex;gap:2rem;align-items:center;list-style:none}
-.nav-links a{font-family:‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.1em;color:#888;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.nav-links a{font-family:'Courier New',monospace;font-size:0.62rem;letter-spacing:0.1em;color:#888;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
 .nav-links a:hover{color:#fff}
 .nav-cta{background:#FF2D78!important;color:#fff!important;padding:0.5rem 1.25rem}
-
-#root{padding-top:68px}
-
+#root{padding-top:68px;min-height:calc(100vh - 68px)}
 footer{background:#111113;border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem}
 .footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
-.footer-name{font-family:‘Courier New’,monospace;font-size:0.7rem;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
-.footer-tag{display:block;font-family:‘Courier New’,monospace;font-size:0.55rem;letter-spacing:0.14em;color:#FF2D78;margin-top:3px}
+.footer-name{font-family:'Courier New',monospace;font-size:0.7rem;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.footer-tag{display:block;font-family:'Courier New',monospace;font-size:0.55rem;letter-spacing:0.14em;color:#FF2D78;margin-top:3px}
 .footer-links{display:flex;gap:2rem;list-style:none;flex-wrap:wrap}
-.footer-links a{font-family:‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-decoration:none;text-transform:uppercase}
+.footer-links a{font-family:'Courier New',monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-decoration:none;text-transform:uppercase}
 .footer-links a:hover{color:#fff}
-.footer-copy{font-family:‘Courier New’,monospace;font-size:0.56rem;letter-spacing:0.08em;color:#333}
-
+.footer-copy{font-family:'Courier New',monospace;font-size:0.56rem;letter-spacing:0.08em;color:#333}
 @keyframes ping{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(2.2);opacity:0}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-
-@media(max-width:900px){
-nav{padding:1rem 1.5rem}
-.nav-links{display:none}
-footer{padding:2rem 1.5rem}
-.footer-inner{flex-direction:column;align-items:flex-start}
-}
+@media(max-width:900px){nav{padding:1rem 1.5rem}.nav-links{display:none}footer{padding:2rem 1.5rem}.footer-inner{flex-direction:column;align-items:flex-start}}
 </style>
-
 </head>
 <body>
 
@@ -82,12 +72,14 @@ footer{padding:2rem 1.5rem}
 
 <script type="text/babel">
 
-// ── EMAILJS CREDENTIALS ──
-// Replace these two values with your real credentials before uploading to GitHub
+// ── CREDENTIALS ── Replace YOUR_SERVICE_ID and YOUR_PUBLIC_KEY before uploading
 const EMAILJS_SERVICE_ID = "service_988ltds";
 const EMAILJS_TEMPLATE_ID = "template_az2gnuc";
 const EMAILJS_PUBLIC_KEY = "OdBrBXj01P0oEjzmi";
- emailjs.init(EMAILJS_PUBLIC_KEY);
+
+// Initialize EmailJS
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
 const JE = {
  dark:"#0D0D0D", charcoal:"#1C1C1E", pink:"#FF2D78",
  pinkDim:"rgba(255,45,120,0.08)", pinkBorder:"rgba(255,45,120,0.3)",
@@ -114,15 +106,15 @@ const TERMS_SECTIONS = [
  {title:"Your Data Rights and Ownership",body:"You retain full ownership of all data you submit. Judicial Engineering claims no ownership interest in your Diagnostic Data, client relationships or operational information. You may request deletion of your submission at any time by contacting judicialengineering@gmail.com."},
  {title:"Anonymized Insights",body:"Judicial Engineering may retain anonymized and aggregated insights derived from submissions to improve its diagnostic frameworks. No identifying information is retained or disclosed in this process."},
  {title:"Intellectual Property",body:"The 3PL Diagnostic Suite including its AI prompts, scoring methodology, diagnostic frameworks and report formats is proprietary to Judicial Engineering. Nothing here grants you any license to reproduce or distribute these tools."},
- {title:"No Legal or Financial Advice",body:"The AI Break Finder provides operational diagnostics only. Nothing in the report constitutes legal, financial or compliance advice. For matters involving freight contract disputes or carrier liability, consult qualified counsel."},
- {title:"Full Mutual NDA for Consulting",body:"This tool-level agreement governs use of the AI Break Finder only. Any paid Judicial Engineering consulting service requires a signed Mutual Non-Disclosure Agreement executed by both parties before confidential data is shared in that deeper context."},
+ {title:"No Legal or Financial Advice",body:"The AI Break Finder provides operational diagnostics only. Nothing in the report constitutes legal, financial or compliance advice."},
+ {title:"Full Mutual NDA for Consulting",body:"This tool-level agreement governs use of the AI Break Finder only. Any paid Judicial Engineering consulting service requires a signed Mutual Non-Disclosure Agreement executed by both parties before confidential data is shared."},
  {title:"Escalation Consent",body:"By submitting this analysis, you consent to Judicial Engineering reviewing your results and contacting you at the email address provided to discuss flagged escalations or consulting services. You may opt out of follow-up at any time."},
  {title:"Governing Law",body:"This agreement is governed by the laws of the State of Georgia. Any disputes arising from use of the 3PL Diagnostic Suite shall be resolved in the courts of the State of Georgia."},
 ];
 
-async function sendEmails({toEmail,toName,companyName,period,score,severity,summary,topPattern,breaks,escalationReason,totalExposure}) {
- const breakList = (breaks||[]).map(b=>
- `#${b.rank} ${b.title} [${b.severity?.toUpperCase()}]${b.amount?` - ${b.amount}`:""}\n${b.finding}\nAction: ${b.action}${b.escalate?"\nESCALATION FLAGGED":""}`
+async function sendEmails({toEmail, toName, companyName, period, score, severity, summary, topPattern, breaks, escalationReason, totalExposure}) {
+ const breakList = (breaks||[]).map(b =>
+ `#${b.rank} ${b.title} [${b.severity?.toUpperCase()}]${b.amount ? ` - ${b.amount}` : ""}\n${b.finding}\nAction: ${b.action}${b.escalate ? "\nESCALATION FLAGGED" : ""}`
  ).join("\n\n");
 
  const reportBody = `3PL AI BREAK FINDER - JUDICIAL ENGINEERING
@@ -141,39 +133,41 @@ ${topPattern}
 BREAKS:
 ${breakList}
 
-${escalationReason?`ESCALATION:\n${escalationReason}`:""}
+${escalationReason ? `ESCALATION:\n${escalationReason}` : ""}
 
 Judicial Engineering - I Trace It Back - judicialengineering.com`;
 
+ const params = {
+ to_name: toName,
+ company_name: companyName || "Not provided",
+ period: period || "Not provided",
+ break_score: score,
+ severity: severity?.toUpperCase(),
+ total_exposure: totalExposure || "N/A",
+ summary,
+ top_pattern: topPattern,
+ report_body: reportBody,
+ escalation_reason: escalationReason || "No escalations flagged.",
+ break_count: breaks?.length || 0,
+ };
+
  try {
- const payload = {
-service_id:EMAILJS_SERVICE_ID,
-template_id:EMAILJS_TEMPLATE_ID,
-user_id:EMAILJS_PUBLIC_KEY,
-template_params:{
-to_email:toEmail,
-to_name:toName,
-company_name:companyName||"Not provided",
-period:period||"Not provided",
-break_score:score,
-severity:severity?.toUpperCase(),
-total_exposure:totalExposure||"N/A",
-summary,
-top_pattern:topPattern,
-report_body:reportBody,
-escalation_reason:escalationReason||"No escalations flagged.",
-break_count:breaks?.length||0,
-},
-};
+ // Send to submitter
+ await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+ ...params,
+ to_email: toEmail,
+ });
 
-wait emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, payload.template_params);
-
-await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-...payload.template_params,
-to_email: "judicialengineering@gmail.com",
-to_name: "Rebecca Thompson",
-});
-
+ // Send to Judicial Engineering
+ await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+ ...params,
+ to_email: "judicialengineering@gmail.com",
+ to_name: "Rebecca Thompson",
+ });
+ } catch(e) {
+ console.warn("Email send failed:", e);
+ }
+}
 
 function PulseRing({color}) {
  return (
@@ -256,13 +250,11 @@ function TermsGate({onAccept}) {
  <div style={{color:JE.white,fontSize:"1.3rem",fontWeight:700,fontFamily:"Georgia,serif"}}>Data Use Agreement and Terms</div>
  <div style={{color:JE.white,opacity:0.82,fontSize:"0.78rem",fontFamily:"'Courier New',monospace",marginTop:"0.25rem"}}>Read all sections. Check each box. Then proceed.</div>
  </div>
-
  {!scrolled&&(
  <div style={{background:JE.pinkDim,borderBottom:`1px solid ${JE.pinkBorder}`,padding:"0.6rem 1.5rem",flexShrink:0}}>
  <span style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem"}}>Scroll through all sections to unlock agreement</span>
  </div>
  )}
-
  <div onScroll={handleScroll} style={{overflowY:"auto",padding:"1.5rem 2rem",flex:1}}>
  {TERMS_SECTIONS.map((t,i)=>(
  <div key={i} onClick={()=>setChecked(p=>({...p,[i]:!p[i]}))}
@@ -276,20 +268,19 @@ function TermsGate({onAccept}) {
  </div>
  </div>
  ))}
- <div style={{background:JE.dark,border:`1px solid rgba(255,215,0,0.15)`,padding:"1rem 1.25rem",marginTop:"0.5rem"}}>
+ <div style={{background:JE.dark,border:"1px solid rgba(255,215,0,0.15)",padding:"1rem 1.25rem",marginTop:"0.5rem"}}>
  <div style={{color:JE.yellow,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.1em",marginBottom:"0.35rem",textTransform:"uppercase"}}>After Your Analysis</div>
- <div style={{color:JE.silver,fontSize:"0.82rem",lineHeight:1.6}}>A signed <strong style={{color:JE.white}}>Mutual Non-Disclosure Agreement</strong> is required before any paid consulting engagement begins. You will be prompted to request it after your results are delivered.</div>
+ <div style={{color:JE.silver,fontSize:"0.82rem",lineHeight:1.6}}>A signed <strong style={{color:JE.white}}>Mutual Non-Disclosure Agreement</strong> is required before any paid consulting engagement begins.</div>
  </div>
  </div>
-
- <div style={{padding:"1.25rem 2rem",borderTop:`1px solid rgba(255,255,255,0.06)`,flexShrink:0}}>
+ <div style={{padding:"1.25rem 2rem",borderTop:"1px solid rgba(255,255,255,0.06)",flexShrink:0}}>
  {attempted&&!scrolled&&<div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem",marginBottom:"0.6rem"}}>Please scroll through all sections first.</div>}
  {attempted&&scrolled&&!allChecked&&<div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.7rem",marginBottom:"0.6rem"}}>Please check all {TERMS_SECTIONS.length} boxes to proceed. ({Object.values(checked).filter(Boolean).length}/{TERMS_SECTIONS.length} acknowledged)</div>}
  <button onClick={()=>{setAttempted(true);if(scrolled&&allChecked)onAccept();}}
  style={{background:allChecked&&scrolled?JE.pink:"#333",border:"none",color:JE.white,padding:"0.9rem",fontFamily:"'Courier New',monospace",fontSize:"0.82rem",cursor:allChecked&&scrolled?"pointer":"default",letterSpacing:"0.1em",textTransform:"uppercase",width:"100%",opacity:allChecked&&scrolled?1:0.45,transition:"all 0.2s"}}>
  {allChecked&&scrolled?"I Agree - Proceed to Analysis":`${Object.values(checked).filter(Boolean).length}/${TERMS_SECTIONS.length} Sections Acknowledged`}
  </button>
- <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",marginTop:"0.6rem",lineHeight:1.5}}>Questions: judicialengineering@gmail.com</div>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",marginTop:"0.6rem"}}>Questions: judicialengineering@gmail.com</div>
  </div>
  </div>
  </div>
@@ -364,23 +355,34 @@ ${pasteData}`;
  messages:[{role:"user",content:userPrompt}],
  }),
  });
+
  clearInterval(ticker);
  setProgress(100);
+
  const data = await res.json();
  const raw = data.content?.find(b=>b.type==="text")?.text||"";
  const parsed = JSON.parse(raw.replace(/```json|```/g,"").trim());
  setAnalysis(parsed);
+
  await sendEmails({
- toEmail:captureEmail,toName:captureName,companyName,
- period:monthPeriod,score:parsed.breakScore,severity:parsed.severity,
- summary:parsed.summary,topPattern:parsed.topPattern,
- breaks:parsed.breaks,escalationReason:parsed.escalationReason,
+ toEmail:captureEmail,
+ toName:captureName,
+ companyName,
+ period:monthPeriod,
+ score:parsed.breakScore,
+ severity:parsed.severity,
+ summary:parsed.summary,
+ topPattern:parsed.topPattern,
+ breaks:parsed.breaks,
+ escalationReason:parsed.escalationReason,
  totalExposure:parsed.totalExposure,
  });
+
  setEmailSent(true);
  setTimeout(()=>setStage("results"),400);
  } catch(err){
  clearInterval(ticker);
+ console.error("Analysis error:",err);
  setError("Analysis failed. Please check your data and try again.");
  setStage("input");
  }
@@ -398,14 +400,7 @@ ${pasteData}`;
  <div style={{height:2,background:"#1C1C1E",borderRadius:2,overflow:"hidden",marginBottom:"2rem"}}>
  <div style={{height:"100%",background:JE.pink,width:`${progress}%`,transition:"width 0.4s ease",borderRadius:2}}/>
  </div>
- {[
- [10,"Parsing charge data..."],
- [30,"Identifying charge type patterns..."],
- [50,"Cross-referencing client and lane exposure..."],
- [68,"Scoring break severity..."],
- [82,"Generating escalation package..."],
- [92,"Sending your report..."],
- ].map(([t,label])=>(
+ {[[10,"Parsing charge data..."],[30,"Identifying charge type patterns..."],[50,"Cross-referencing client and lane exposure..."],[68,"Scoring break severity..."],[82,"Generating escalation package..."],[92,"Sending your report..."]].map(([t,label])=>(
  <div key={label} style={{color:progress>=t?JE.silver:JE.dim,fontSize:"0.78rem",letterSpacing:"0.05em",marginBottom:"0.5rem",transition:"color 0.4s"}}>
  {progress>=t?"✓":"○"} {label}
  </div>
@@ -428,15 +423,13 @@ ${pasteData}`;
  <h2 style={{color:JE.white,fontSize:"1.6rem",margin:"0 0 0.5rem",fontWeight:700,fontFamily:"Georgia,serif"}}>Where should we send your report?</h2>
  <p style={{color:JE.silver,fontSize:"0.9rem",lineHeight:1.7,margin:0}}>Your full break analysis will be emailed instantly. Judicial Engineering receives a copy to review your escalations.</p>
  </div>
- <div style={{background:JE.cardBg,padding:"2rem",border:`1px solid rgba(255,255,255,0.06)`}}>
+ <div style={{background:JE.cardBg,padding:"2rem",border:"1px solid rgba(255,255,255,0.06)"}}>
  <div style={{display:"flex",flexDirection:"column",gap:"0.85rem",marginBottom:"1.25rem"}}>
- {[["Your Name","captureName",captureName,setCaptureName,"First and last name","text"],
- ["Work Email","captureEmail",captureEmail,setCaptureEmail,"you@yourcompany.com","email"]
- ].map(([label,id,val,setter,ph,type])=>(
- <div key={id} style={{display:"flex",flexDirection:"column",gap:"0.35rem"}}>
+ {[["Your Name",captureName,setCaptureName,"First and last name","text"],["Work Email",captureEmail,setCaptureEmail,"you@yourcompany.com","email"]].map(([label,val,setter,ph,type])=>(
+ <div key={label} style={{display:"flex",flexDirection:"column",gap:"0.35rem"}}>
  <label style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>{label}</label>
  <input type={type} value={val} onChange={e=>setter(e.target.value)} placeholder={ph}
- style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.1)`,color:JE.white,padding:"0.65rem 0.9rem",fontFamily:"Georgia,serif",fontSize:"0.9rem",outline:"none",width:"100%"}}/>
+ style={{background:JE.dark,border:"1px solid rgba(255,255,255,0.1)",color:JE.white,padding:"0.65rem 0.9rem",fontFamily:"Georgia,serif",fontSize:"0.9rem",outline:"none",width:"100%"}}/>
  </div>
  ))}
  </div>
@@ -446,7 +439,7 @@ ${pasteData}`;
  Run Analysis and Send Report
  </button>
  <div style={{marginTop:"1rem",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",lineHeight:1.6}}>
- Your data is used only to generate this diagnostic per the terms you agreed to. Judicial Engineering will follow up on flagged escalations.
+ Your data is used only to generate this diagnostic per the terms you agreed to.
  </div>
  </div>
  <button onClick={()=>setStage("input")} style={{background:"transparent",border:"none",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.72rem",cursor:"pointer",marginTop:"1rem",letterSpacing:"0.05em",textTransform:"uppercase"}}>Back to data input</button>
@@ -468,7 +461,7 @@ ${pasteData}`;
  <div style={{display:"flex",gap:"0.6rem",alignItems:"center",flexWrap:"wrap"}}>
  {emailSent&&<span style={{color:JE.green,fontFamily:"'Courier New',monospace",fontSize:"0.68rem"}}>✓ Report sent to {captureEmail}</span>}
  <button onClick={()=>{setStage("input");setAnalysis(null);setPasteData("");}}
- style={{background:"transparent",border:`1px solid rgba(255,255,255,0.2)`,color:JE.silver,padding:"0.5rem 1.25rem",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",cursor:"pointer",textTransform:"uppercase"}}>
+ style={{background:"transparent",border:"1px solid rgba(255,255,255,0.2)",color:JE.silver,padding:"0.5rem 1.25rem",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",cursor:"pointer",textTransform:"uppercase"}}>
  New Analysis
  </button>
  </div>
@@ -524,7 +517,7 @@ ${pasteData}`;
  </div>
 
  {analysis.nextLayerPrompt&&(
- <div style={{background:JE.charcoal,padding:"1.25rem 1.5rem",marginBottom:"1.25rem",display:"flex",gap:"0.75rem",alignItems:"flex-start",border:`1px solid rgba(255,255,255,0.06)`,background:"#1C1C1E"}}>
+ <div style={{background:"#1C1C1E",padding:"1.25rem 1.5rem",marginBottom:"1.25rem",display:"flex",gap:"0.75rem",alignItems:"flex-start",border:"1px solid rgba(255,255,255,0.06)"}}>
  <span style={{color:JE.yellow,fontSize:"0.9rem",flexShrink:0}}>⟳</span>
  <div>
  <div style={{color:JE.yellow,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.12em",marginBottom:"0.3rem",textTransform:"uppercase"}}>Next Month - Subscribe to AI Break Finder</div>
@@ -533,15 +526,16 @@ ${pasteData}`;
  </div>
  )}
 
- <div style={{borderTop:`1px solid rgba(255,255,255,0.06)`,paddingTop:"1.25rem",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"0.5rem"}}>
+ <div style={{borderTop:"1px solid rgba(255,255,255,0.06)",paddingTop:"1.25rem",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"0.5rem"}}>
  <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Judicial Engineering · 3PL Diagnostic Suite · Layer 3 · I Trace It Back</div>
- <button onClick={()=>window.print()} style={{background:"transparent",border:`1px solid rgba(255,255,255,0.1)`,color:JE.silver,padding:"0.4rem 1rem",fontFamily:"'Courier New',monospace",fontSize:"0.7rem",cursor:"pointer",textTransform:"uppercase"}}>Print Report</button>
+ <button onClick={()=>window.print()} style={{background:"transparent",border:"1px solid rgba(255,255,255,0.1)",color:JE.silver,padding:"0.4rem 1rem",fontFamily:"'Courier New',monospace",fontSize:"0.7rem",cursor:"pointer",textTransform:"uppercase"}}>Print Report</button>
  </div>
  </div>
  </div>
  );
  }
 
+ // INPUT SCREEN
  return (
  <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,padding:"1.5rem"}}>
  <div style={{maxWidth:680,margin:"0 auto"}}>
@@ -557,15 +551,11 @@ ${pasteData}`;
 
  <div style={{background:JE.cardBg,padding:"2rem",marginBottom:"1rem"}}>
  <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",marginBottom:"1.25rem"}}>
- {[
- ["Company / 3PL Name",companyName,setCompanyName,"e.g. Summit 3PL","text"],
- ["Reporting Period",monthPeriod,setMonthPeriod,"e.g. March 2026","text"],
- ["Layer 1 Score (optional)",scorecardScore,setScorecardScore,"e.g. 62","number"],
- ].map(([label,val,setter,ph,type])=>(
+ {[["Company / 3PL Name",companyName,setCompanyName,"e.g. Summit 3PL","text"],["Reporting Period",monthPeriod,setMonthPeriod,"e.g. March 2026","text"],["Layer 1 Score (optional)",scorecardScore,setScorecardScore,"e.g. 62","number"]].map(([label,val,setter,ph,type])=>(
  <div key={label} style={{display:"flex",flexDirection:"column",gap:"0.35rem",flex:"1 1 180px"}}>
  <label style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>{label}</label>
  <input type={type} value={val} onChange={e=>setter(e.target.value)} placeholder={ph}
- style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.1)`,color:JE.white,padding:"0.65rem 0.9rem",fontFamily:"Georgia,serif",fontSize:"0.9rem",outline:"none",width:"100%"}}/>
+ style={{background:JE.dark,border:"1px solid rgba(255,255,255,0.1)",color:JE.white,padding:"0.65rem 0.9rem",fontFamily:"Georgia,serif",fontSize:"0.9rem",outline:"none",width:"100%"}}/>
  </div>
  ))}
  </div>
@@ -574,13 +564,13 @@ ${pasteData}`;
  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"0.5rem",flexWrap:"wrap",gap:"0.5rem"}}>
  <label style={{color:JE.silver,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Charge Data - CSV or Plain Text</label>
  <button onClick={()=>{setPasteData(SAMPLE_DATA);setCompanyName("Demo 3PL Co.");setMonthPeriod("Q1 2026");}}
- style={{background:"transparent",border:`1px solid rgba(255,255,255,0.1)`,color:JE.silver,padding:"0.25rem 0.75rem",fontFamily:"'Courier New',monospace",fontSize:"0.65rem",cursor:"pointer",textTransform:"uppercase"}}>
+ style={{background:"transparent",border:"1px solid rgba(255,255,255,0.1)",color:JE.silver,padding:"0.25rem 0.75rem",fontFamily:"'Courier New',monospace",fontSize:"0.65rem",cursor:"pointer",textTransform:"uppercase"}}>
  Load Sample
  </button>
  </div>
  <textarea value={pasteData} onChange={e=>setPasteData(e.target.value)} rows={10}
  placeholder={`Paste CSV or describe charges in plain text.\n\ncharge_type,client,lane,count,amount,month\nDetention,Acme,Lane 7,8,1640.00,March`}
- style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.08)`,color:JE.lightSilver,padding:"0.85rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",outline:"none",resize:"vertical",width:"100%",lineHeight:1.7}}/>
+ style={{background:JE.dark,border:"1px solid rgba(255,255,255,0.08)",color:JE.lightSilver,padding:"0.85rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",outline:"none",resize:"vertical",width:"100%",lineHeight:1.7}}/>
  <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",marginTop:"0.4rem"}}>Include charge type, client, amount and frequency for best results.</div>
  </div>
 
