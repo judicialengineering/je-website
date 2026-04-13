@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Monthly Break Report - Judicial Engineering</title>
+<meta name="description" content="Billing and ops fill it together. Clients receive a clean summary. The pattern builds month over month."/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#090909;color:#d0d0d0;font-family:Georgia,serif;line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;background:rgba(9,9,9,0.95);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{display:flex;flex-direction:column;gap:2px;text-decoration:none}
+.nav-name{font-family:‘Courier New’,monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.nav-tag{font-family:‘Courier New’,monospace;font-size:0.55rem;color:#FF2D78;letter-spacing:0.15em}
+.nav-links{display:flex;gap:2rem;align-items:center;list-style:none}
+.nav-links a{font-family:‘Courier New’,monospace;font-size:0.62rem;letter-spacing:0.1em;color:#888;text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:#FF2D78!important;color:#fff!important;padding:0.5rem 1.25rem}
+
+#root{padding-top:68px}
+
+footer{background:#111113;border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+.footer-name{font-family:‘Courier New’,monospace;font-size:0.7rem;letter-spacing:0.18em;color:#fff;text-transform:uppercase}
+.footer-tag{display:block;font-family:‘Courier New’,monospace;font-size:0.55rem;letter-spacing:0.14em;color:#FF2D78;margin-top:3px}
+.footer-links{display:flex;gap:2rem;list-style:none;flex-wrap:wrap}
+.footer-links a{font-family:‘Courier New’,monospace;font-size:0.6rem;letter-spacing:0.1em;color:#555;text-decoration:none;text-transform:uppercase}
+.footer-links a:hover{color:#fff}
+.footer-copy{font-family:‘Courier New’,monospace;font-size:0.56rem;letter-spacing:0.08em;color:#333}
+
+@media(max-width:900px){
+nav{padding:1rem 1.5rem}
+.nav-links{display:none}
+footer{padding:2rem 1.5rem}
+.footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+ <a href="/" class="nav-brand">
+ <span class="nav-name">Judicial Engineering</span>
+ <span class="nav-tag">I Trace It Back.</span>
+ </a>
+ <ul class="nav-links">
+ <li><a href="/#suite">The Suite</a></li>
+ <li><a href="/#how">How It Works</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/contact" class="nav-cta">Contact</a></li>
+ </ul>
+</nav>
+
+<div id="root"></div>
+
+<footer>
+ <div class="footer-inner">
+ <div>
+ <span class="footer-name">Judicial Engineering</span>
+ <span class="footer-tag">I Trace It Back.</span>
+ </div>
+ <ul class="footer-links">
+ <li><a href="/#suite">Diagnostic Suite</a></li>
+ <li><a href="/#services">Services</a></li>
+ <li><a href="/about">About</a></li>
+ <li><a href="/contact">Contact</a></li>
+ </ul>
+ <div class="footer-copy">© 2026 Judicial Engineering · Atlanta, GA</div>
+ </div>
+</footer>
+
+<script type="text/babel">
+const JE = {
+ charcoal:"#1a1a1a", dark:"#111111", pink:"#FF2D78",
+ silver:"#C0C0C0", lightSilver:"#e8e8e8", white:"#ffffff",
+ yellow:"#FFD600", green:"#00E676", dim:"#555555", cardBg:"#161618",
+};
+
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const YEARS = ["2025","2026","2027"];
+const CHARGE_TYPES = ["Detention / Driver Wait Time","Liftgate","Residential Delivery","Inside Delivery","Redelivery","Address Correction","Fuel Surcharge Variance","Non-Compliant Receiving","Layover / TONU","Attempted Pickup","Oversize / Overweight","Hazmat Handling","Other"];
+const STATUS_OPTIONS = [{value:"open",label:"Open",color:"#FF2D78"},{value:"in_progress",label:"In Progress",color:"#FFD600"},{value:"resolved",label:"Resolved",color:"#00E676"},{value:"disputed",label:"Disputed",color:"#FF9800"}];
+const SCORECARD_RATINGS = [{value:"",label:"Not run this month"},{value:"controlled",label:"CONTROLLED (80-100)"},{value:"leaking",label:"LEAKING (55-79)"},{value:"broken",label:"BROKEN (0-54)"}];
+
+const emptyCharge = () => ({id:Date.now()+Math.random(),type:"",client:"",count:"",totalAmount:"",rootCause:"",status:"open",action:"",billedToClient:"yes"});
+const emptyDispute = () => ({id:Date.now()+Math.random(),chargeType:"",carrier:"",amount:"",reason:"",outcome:"pending",recovered:""});
+
+function Tag({color,children}) {
+ return <span style={{background:color+"22",border:`1px solid ${color}55`,color,padding:"0.2rem 0.6rem",fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.08em",textTransform:"uppercase"}}>{children}</span>;
+}
+
+function SectionHeader({number,title,subtitle}) {
+ return (
+ <div style={{marginBottom:"1.5rem",paddingBottom:"0.75rem",borderBottom:`1px solid rgba(255,255,255,0.08)`}}>
+ <div style={{display:"flex",alignItems:"center",gap:"0.75rem"}}>
+ <div style={{background:JE.pink,color:JE.white,width:28,height:28,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",fontWeight:700,flexShrink:0}}>{number}</div>
+ <div>
+ <div style={{color:JE.white,fontSize:"1.05rem",fontWeight:700}}>{title}</div>
+ {subtitle && <div style={{color:JE.dim,fontSize:"0.78rem",fontFamily:"'Courier New',monospace",marginTop:2}}>{subtitle}</div>}
+ </div>
+ </div>
+ </div>
+ );
+}
+
+function Input({label,value,onChange,type="text",placeholder="",wide=false}) {
+ return (
+ <div style={{display:"flex",flexDirection:"column",gap:"0.35rem",flex:wide?"1 1 100%":"1 1 180px"}}>
+ <label style={{color:JE.silver,fontSize:"0.68rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.08em",textTransform:"uppercase"}}>{label}</label>
+ <input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}
+ style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.1)`,color:JE.white,padding:"0.6rem 0.85rem",fontFamily:"Georgia,serif",fontSize:"0.88rem",outline:"none",width:"100%"}}/>
+ </div>
+ );
+}
+
+function Select({label,value,onChange,options}) {
+ return (
+ <div style={{display:"flex",flexDirection:"column",gap:"0.35rem",flex:"1 1 180px"}}>
+ <label style={{color:JE.silver,fontSize:"0.68rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.08em",textTransform:"uppercase"}}>{label}</label>
+ <select value={value} onChange={e=>onChange(e.target.value)}
+ style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.1)`,color:JE.white,padding:"0.6rem 0.85rem",fontFamily:"Georgia,serif",fontSize:"0.88rem",outline:"none",appearance:"none",cursor:"pointer"}}>
+ {options.map(o=><option key={o.value||o} value={o.value||o}>{o.label||o}</option>)}
+ </select>
+ </div>
+ );
+}
+
+function Textarea({label,value,onChange,placeholder="",rows=3}) {
+ return (
+ <div style={{display:"flex",flexDirection:"column",gap:"0.35rem",flex:"1 1 100%"}}>
+ <label style={{color:JE.silver,fontSize:"0.68rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.08em",textTransform:"uppercase"}}>{label}</label>
+ <textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={rows}
+ style={{background:JE.dark,border:`1px solid rgba(255,255,255,0.1)`,color:JE.white,padding:"0.6rem 0.85rem",fontFamily:"Georgia,serif",fontSize:"0.88rem",outline:"none",resize:"vertical",width:"100%",lineHeight:1.6}}/>
+ </div>
+ );
+}
+
+function TermsCheck({onAccept}) {
+ const [checked,setChecked] = React.useState(false);
+ const [attempted,setAttempted] = React.useState(false);
+
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+ <div style={{maxWidth:560,width:"100%"}}>
+ <div style={{textAlign:"center",marginBottom:"2.5rem"}}>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.25em",marginBottom:"1.25rem",textTransform:"uppercase"}}>
+ Judicial Engineering · 3PL Diagnostic Suite · Layer 2
+ </div>
+ <h1 style={{color:JE.white,fontSize:"2rem",fontWeight:700,margin:"0 0 0.5rem",fontFamily:"Georgia,serif"}}>Monthly Break Report</h1>
+ <p style={{color:JE.silver,fontSize:"0.9rem",lineHeight:1.7,margin:0}}>Before we begin, please review how your data is handled.</p>
+ </div>
+
+ <div style={{background:JE.cardBg,border:`1px solid rgba(255,255,255,0.08)`,padding:"2rem",marginBottom:"1rem"}}>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.65rem",letterSpacing:"0.15em",marginBottom:"1.25rem",textTransform:"uppercase"}}>Data Use Notice</div>
+ {[
+ ["Your Report Data Is Confidential","Client names, charge amounts, carrier details and lane data entered into the Break Report are treated as confidential business information and trade secrets. Judicial Engineering will not disclose this information to any third party."],
+ ["Who Sees This","Rebecca Thompson (Founder, Judicial Engineering) may review submitted reports to follow up on escalations or offer consulting services. You may opt out of any follow-up at any time."],
+ ["Data Ownership","You retain full ownership of all data you enter. Judicial Engineering may use anonymized and aggregated insights to improve diagnostic frameworks. No identifying data is retained or shared."],
+ ["Full NDA for Consulting","Any paid consulting engagement requires a signed Mutual Non-Disclosure Agreement executed by both parties before confidential data is exchanged."],
+ ["Intellectual Property","The Break Report format, structure and diagnostic methodology are proprietary to Judicial Engineering. Your data and findings are yours."],
+ ].map(([title,body]) => (
+ <div key={title} style={{marginBottom:"1rem",paddingBottom:"1rem",borderBottom:`1px solid rgba(255,255,255,0.06)`}}>
+ <div style={{color:JE.lightSilver,fontFamily:"'Courier New',monospace",fontSize:"0.68rem",fontWeight:700,letterSpacing:"0.05em",marginBottom:"0.3rem"}}>{title}</div>
+ <div style={{color:JE.silver,fontSize:"0.84rem",lineHeight:1.65}}>{body}</div>
+ </div>
+ ))}
+
+ <div onClick={() => setChecked(p=>!p)} style={{display:"flex",gap:"0.85rem",alignItems:"flex-start",cursor:"pointer",padding:"1rem",background:checked?"rgba(0,230,118,0.06)":JE.dark,border:`1px solid ${checked?"rgba(0,230,118,0.3)":"rgba(255,255,255,0.1)"}`,transition:"all 0.2s",marginTop:"0.5rem"}}>
+ <div style={{width:22,height:22,border:`2px solid ${checked?JE.green:"rgba(255,255,255,0.3)"}`,background:checked?JE.green:"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.15s",marginTop:1}}>
+ {checked && <span style={{color:JE.dark,fontSize:"0.8rem",fontWeight:900}}>✓</span>}
+ </div>
+ <div style={{color:checked?JE.lightSilver:JE.silver,fontSize:"0.87rem",lineHeight:1.6,transition:"color 0.2s"}}>
+ I understand that data entered into this report including client names, charge amounts and carrier details is confidential. I acknowledge Judicial Engineering's data use practices and that a full Mutual NDA is required for any consulting engagement.
+ </div>
+ </div>
+
+ {attempted && !checked && (
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.72rem",marginTop:"0.75rem"}}>Please acknowledge the data use notice to continue.</div>
+ )}
+ </div>
+
+ <button onClick={() => {setAttempted(true); if(checked) onAccept();}}
+ style={{background:checked?JE.pink:"#333",border:"none",color:JE.white,padding:"1rem",fontFamily:"'Courier New',monospace",fontSize:"0.85rem",cursor:checked?"pointer":"default",letterSpacing:"0.12em",textTransform:"uppercase",width:"100%",opacity:checked?1:0.5,transition:"all 0.2s"}}>
+ I Acknowledge - Open Break Report
+ </button>
+
+ <div style={{textAlign:"center",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",marginTop:"1rem",textTransform:"uppercase"}}>
+ Judicial Engineering · I Trace It Back · judicialengineering.com
+ </div>
+ </div>
+ </div>
+ );
+}
+
+function App() {
+ const [stage,setStage] = React.useState("terms");
+ const now = new Date();
+ const [month,setMonth] = React.useState(MONTHS[now.getMonth()]);
+ const [year,setYear] = React.useState(String(now.getFullYear()));
+ const [preparedBy,setPreparedBy] = React.useState("");
+ const [reviewedBy,setReviewedBy] = React.useState("");
+ const [clientName,setClientName] = React.useState("");
+ const [period,setPeriod] = React.useState("");
+ const [scorecardRating,setScorecardRating] = React.useState("");
+ const [scorecardScore,setScorecardScore] = React.useState("");
+ const [scorecardNotes,setScorecardNotes] = React.useState("");
+ const [charges,setCharges] = React.useState([emptyCharge()]);
+ const [disputes,setDisputes] = React.useState([emptyDispute()]);
+ const [repeatPatterns,setRepeatPatterns] = React.useState("");
+ const [rootCauseSummary,setRootCauseSummary] = React.useState("");
+ const [correctiveActions,setCorrectiveActions] = React.useState("");
+ const [clientHighlight,setClientHighlight] = React.useState("");
+ const [clientAction,setClientAction] = React.useState("");
+ const [clientTrend,setClientTrend] = React.useState("stable");
+
+ const addCharge = () => setCharges(p=>[...p,emptyCharge()]);
+ const removeCharge = id => setCharges(p=>p.filter(c=>c.id!==id));
+ const updateCharge = (id,f,v) => setCharges(p=>p.map(c=>c.id===id?{...c,[f]:v}:c));
+ const addDispute = () => setDisputes(p=>[...p,emptyDispute()]);
+ const removeDispute = id => setDisputes(p=>p.filter(d=>d.id!==id));
+ const updateDispute = (id,f,v) => setDisputes(p=>p.map(d=>d.id===id?{...d,[f]:v}:d));
+
+ const totalChargeAmount = charges.reduce((s,c)=>s+(parseFloat(c.totalAmount)||0),0);
+ const totalRecovered = disputes.reduce((s,d)=>s+(parseFloat(d.recovered)||0),0);
+ const openDisputes = disputes.filter(d=>d.outcome==="pending").length;
+ const ratingColor = scorecardRating==="controlled"?JE.green:scorecardRating==="leaking"?JE.yellow:scorecardRating==="broken"?JE.pink:JE.silver;
+
+ if (stage==="terms") return <TermsCheck onAccept={()=>setStage("form")}/>;
+
+ if (stage==="preview") {
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,padding:"2rem"}}>
+ <div style={{maxWidth:720,margin:"0 auto"}}>
+ <div style={{background:JE.pink,padding:"2rem 2.5rem",marginBottom:"0.1rem"}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:"1rem"}}>
+ <div>
+ <div style={{color:JE.white,fontSize:"0.62rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.2em",opacity:0.85,marginBottom:"0.4rem",textTransform:"uppercase"}}>Judicial Engineering · 3PL Diagnostic Suite · Layer 2</div>
+ <div style={{color:JE.white,fontSize:"1.8rem",fontWeight:700,lineHeight:1.1,fontFamily:"Georgia,serif"}}>Break Report</div>
+ <div style={{color:JE.white,opacity:0.85,fontSize:"0.88rem",fontFamily:"'Courier New',monospace",marginTop:"0.4rem"}}>{month} {year} {period&&`· ${period}`}</div>
+ </div>
+ <div style={{textAlign:"right"}}>
+ {clientName&&<div style={{color:JE.white,fontWeight:700,fontSize:"1.1rem"}}>{clientName}</div>}
+ <div style={{color:JE.white,opacity:0.75,fontSize:"0.78rem",fontFamily:"'Courier New',monospace"}}>Prepared by {preparedBy||"—"}</div>
+ <div style={{color:JE.white,opacity:0.75,fontSize:"0.78rem",fontFamily:"'Courier New',monospace"}}>Reviewed by {reviewedBy||"—"}</div>
+ </div>
+ </div>
+ </div>
+
+ <div style={{background:JE.charcoal,padding:"1.5rem 2.5rem",display:"flex",gap:"2rem",flexWrap:"wrap",marginBottom:"0.1rem",background:"#1a1a1a"}}>
+ {[
+ {label:"Total Accessorial Charges",value:`$${totalChargeAmount.toLocaleString("en-US",{minimumFractionDigits:2})}`},
+ {label:"Charge Line Items",value:charges.filter(c=>c.type).length},
+ {label:"Open Disputes",value:openDisputes},
+ {label:"Recovered This Month",value:`$${totalRecovered.toLocaleString("en-US",{minimumFractionDigits:2})}`},
+ ].map(s=>(
+ <div key={s.label} style={{flex:"1 1 120px"}}>
+ <div style={{color:JE.dim,fontSize:"0.62rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.3rem"}}>{s.label}</div>
+ <div style={{color:JE.white,fontSize:"1.4rem",fontWeight:700,fontFamily:"Georgia,serif"}}>{s.value}</div>
+ </div>
+ ))}
+ {scorecardRating&&(
+ <div style={{flex:"1 1 120px"}}>
+ <div style={{color:JE.dim,fontSize:"0.62rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.3rem"}}>Diagnostic Score</div>
+ <div style={{color:ratingColor,fontSize:"1.1rem",fontWeight:700,fontFamily:"'Courier New',monospace"}}>{scorecardScore&&`${scorecardScore} · `}{scorecardRating.toUpperCase()}</div>
+ </div>
+ )}
+ </div>
+
+ {charges.filter(c=>c.type).length>0&&(
+ <div style={{background:"#1a1a1a",padding:"1.75rem 2.5rem",marginBottom:"0.1rem"}}>
+ <div style={{color:JE.pink,fontSize:"0.68rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:"1rem"}}>Accessorial Charge Detail</div>
+ <div style={{overflowX:"auto"}}>
+ <table style={{width:"100%",borderCollapse:"collapse",fontSize:"0.84rem"}}>
+ <thead>
+ <tr>{["Charge Type","Client / Lane","Count","Amount","Root Cause","Status"].map(h=>(
+ <th key={h} style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.08em",textTransform:"uppercase",textAlign:"left",padding:"0.5rem 0.75rem",borderBottom:`1px solid rgba(255,255,255,0.08)`,fontWeight:400}}>{h}</th>
+ ))}</tr>
+ </thead>
+ <tbody>
+ {charges.filter(c=>c.type).map((c,i)=>{
+ const st=STATUS_OPTIONS.find(s=>s.value===c.status);
+ return (
+ <tr key={c.id} style={{background:i%2===0?"transparent":"rgba(255,255,255,0.02)"}}>
+ <td style={{color:JE.white,padding:"0.6rem 0.75rem"}}>{c.type}</td>
+ <td style={{color:JE.silver,padding:"0.6rem 0.75rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem"}}>{c.client||"—"}</td>
+ <td style={{color:JE.silver,padding:"0.6rem 0.75rem",fontFamily:"'Courier New',monospace"}}>{c.count||"—"}</td>
+ <td style={{color:JE.yellow,padding:"0.6rem 0.75rem",fontFamily:"'Courier New',monospace"}}>{c.totalAmount?`$${parseFloat(c.totalAmount).toLocaleString("en-US",{minimumFractionDigits:2})}`:"—"}</td>
+ <td style={{color:JE.silver,padding:"0.6rem 0.75rem",fontSize:"0.8rem",maxWidth:160}}>{c.rootCause||"—"}</td>
+ <td style={{padding:"0.6rem 0.75rem"}}><Tag color={st?.color||JE.silver}>{st?.label||c.status}</Tag></td>
+ </tr>
+ );
+ })}
+ </tbody>
+ </table>
+ </div>
+ </div>
+ )}
+
+ {(repeatPatterns||rootCauseSummary||correctiveActions)&&(
+ <div style={{background:"#1a1a1a",padding:"1.75rem 2.5rem",marginBottom:"0.1rem"}}>
+ <div style={{color:JE.pink,fontSize:"0.68rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:"1.25rem"}}>Operations Analysis</div>
+ {repeatPatterns&&<div style={{marginBottom:"1rem"}}><div style={{color:JE.silver,fontSize:"0.65rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.35rem"}}>Repeat Patterns</div><div style={{color:JE.lightSilver,lineHeight:1.7,fontSize:"0.88rem"}}>{repeatPatterns}</div></div>}
+ {rootCauseSummary&&<div style={{marginBottom:"1rem"}}><div style={{color:JE.silver,fontSize:"0.65rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.35rem"}}>Root Cause Summary</div><div style={{color:JE.lightSilver,lineHeight:1.7,fontSize:"0.88rem"}}>{rootCauseSummary}</div></div>}
+ {correctiveActions&&<div><div style={{color:JE.silver,fontSize:"0.65rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.35rem"}}>Corrective Actions</div><div style={{color:JE.lightSilver,lineHeight:1.7,fontSize:"0.88rem"}}>{correctiveActions}</div></div>}
+ </div>
+ )}
+
+ <div style={{background:"#1a1a1a",padding:"1.75rem 2.5rem",marginBottom:"0.1rem"}}>
+ <div style={{color:JE.pink,fontSize:"0.68rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:"1.25rem"}}>Client Summary</div>
+ <div style={{display:"flex",gap:"1rem",alignItems:"center",marginBottom:"1rem",flexWrap:"wrap"}}>
+ <div style={{color:JE.silver,fontSize:"0.75rem",fontFamily:"'Courier New',monospace"}}>Trend:</div>
+ <Tag color={clientTrend==="improving"?JE.green:clientTrend==="worsening"?JE.pink:JE.yellow}>
+ {clientTrend==="improving"?"Improving":clientTrend==="worsening"?"Worsening":"Stable"}
+ </Tag>
+ </div>
+ {clientHighlight&&<div style={{marginBottom:"1rem"}}><div style={{color:JE.silver,fontSize:"0.65rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.35rem"}}>What We Want You To Know</div><div style={{color:JE.lightSilver,lineHeight:1.7,fontSize:"0.88rem"}}>{clientHighlight}</div></div>}
+ {clientAction&&<div><div style={{color:JE.silver,fontSize:"0.65rem",fontFamily:"'Courier New',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.35rem"}}>Action Required</div><div style={{color:JE.lightSilver,lineHeight:1.7,fontSize:"0.88rem"}}>{clientAction}</div></div>}
+ </div>
+
+ <div style={{background:JE.dark,padding:"1.25rem 2.5rem",borderTop:`2px solid ${JE.pink}`,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"0.5rem"}}>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Judicial Engineering · 3PL Diagnostic Suite · I Trace It Back</div>
+ <div style={{color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.62rem"}}>{month} {year}</div>
+ </div>
+
+ <div style={{marginTop:"1.5rem",display:"flex",gap:"0.75rem",flexWrap:"wrap"}}>
+ <button onClick={()=>setStage("form")} style={{background:"transparent",border:`1px solid rgba(255,255,255,0.2)`,color:JE.silver,padding:"0.75rem 1.5rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer"}}>Edit Report</button>
+ <button onClick={()=>window.print()} style={{background:JE.pink,border:"none",color:JE.white,padding:"0.75rem 2rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>Print / Export</button>
+ </div>
+ </div>
+ </div>
+ );
+ }
+
+ return (
+ <div style={{minHeight:"calc(100vh - 68px)",background:JE.dark,padding:"1.5rem"}}>
+ <div style={{maxWidth:720,margin:"0 auto"}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"2rem",flexWrap:"wrap",gap:"0.75rem"}}>
+ <div>
+ <div style={{color:JE.pink,fontSize:"0.62rem",letterSpacing:"0.22em",fontFamily:"'Courier New',monospace",marginBottom:"0.3rem",textTransform:"uppercase"}}>Judicial Engineering · Layer 2</div>
+ <h1 style={{color:JE.white,fontSize:"1.75rem",margin:0,fontWeight:700,fontFamily:"Georgia,serif"}}>Monthly Break Report</h1>
+ </div>
+ <button onClick={()=>setStage("preview")} style={{background:JE.pink,border:"none",color:JE.white,padding:"0.75rem 1.75rem",fontFamily:"'Courier New',monospace",fontSize:"0.78rem",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>Preview Report</button>
+ </div>
+
+ <div style={{display:"flex",flexDirection:"column",gap:"1.25rem"}}>
+
+ <div style={{background:JE.cardBg,padding:"1.75rem"}}>
+ <SectionHeader number="1" title="Report Header" subtitle="Filled by both ops and billing before sending to client"/>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap"}}>
+ <Select label="Month" value={month} onChange={setMonth} options={MONTHS}/>
+ <Select label="Year" value={year} onChange={setYear} options={YEARS}/>
+ <Input label="Reporting Period" value={period} onChange={setPeriod} placeholder="e.g. Apr 1-30, 2026"/>
+ </div>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",marginTop:"0.75rem"}}>
+ <Input label="Client / Account Name" value={clientName} onChange={setClientName} placeholder="e.g. Acme Distribution"/>
+ <Input label="Prepared By (Billing)" value={preparedBy} onChange={setPreparedBy} placeholder="Name"/>
+ <Input label="Reviewed By (Ops)" value={reviewedBy} onChange={setReviewedBy} placeholder="Name"/>
+ </div>
+ </div>
+
+ <div style={{background:JE.cardBg,padding:"1.75rem"}}>
+ <SectionHeader number="2" title="Diagnostic Scorecard Reference" subtitle="Links Layer 1 results to this report"/>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap"}}>
+ <Select label="Scorecard Rating This Month" value={scorecardRating} onChange={setScorecardRating} options={SCORECARD_RATINGS}/>
+ <Input label="Score (0-100)" value={scorecardScore} onChange={setScorecardScore} type="number" placeholder="e.g. 62"/>
+ </div>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",marginTop:"0.75rem"}}>
+ <Textarea label="Key Findings From Scorecard" value={scorecardNotes} onChange={setScorecardNotes} placeholder="e.g. Root cause visibility scored lowest this month." rows={2}/>
+ </div>
+ {!scorecardRating&&(
+ <div style={{marginTop:"0.75rem",padding:"0.75rem 1rem",background:`rgba(255,45,120,0.08)`,border:`1px solid rgba(255,45,120,0.2)`}}>
+ <span style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.75rem"}}>Have not run the scorecard yet? Layer 1 - Accessorial Diagnostic Scorecard is available at judicialengineering.com/diagnostic</span>
+ </div>
+ )}
+ </div>
+
+ <div style={{background:JE.cardBg,padding:"1.75rem"}}>
+ <SectionHeader number="3" title="Accessorial Charge Log" subtitle="Billing team fills - one row per charge type"/>
+ <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
+ {charges.map((c,i)=>(
+ <div key={c.id} style={{background:JE.dark,padding:"1.25rem",border:`1px solid rgba(255,255,255,0.06)`}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"0.75rem"}}>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.68rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Charge #{i+1}</div>
+ {charges.length>1&&<button onClick={()=>removeCharge(c.id)} style={{background:"transparent",border:"none",color:JE.dim,cursor:"pointer",fontFamily:"'Courier New',monospace",fontSize:"0.72rem"}}>Remove</button>}
+ </div>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",marginBottom:"0.75rem"}}>
+ <Select label="Charge Type" value={c.type} onChange={v=>updateCharge(c.id,"type",v)} options={[{value:"",label:"Select type..."},...CHARGE_TYPES.map(t=>({value:t,label:t}))]}/>
+ <Input label="Client / Lane" value={c.client} onChange={v=>updateCharge(c.id,"client",v)} placeholder="e.g. Acme / Lane 3"/>
+ <Input label="Count" value={c.count} onChange={v=>updateCharge(c.id,"count",v)} type="number" placeholder="4"/>
+ <Input label="Total Amount ($)" value={c.totalAmount} onChange={v=>updateCharge(c.id,"totalAmount",v)} type="number" placeholder="840.00"/>
+ </div>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap"}}>
+ <Input label="Root Cause" value={c.rootCause} onChange={v=>updateCharge(c.id,"rootCause",v)} placeholder="e.g. Late pickup by carrier" wide/>
+ <Select label="Status" value={c.status} onChange={v=>updateCharge(c.id,"status",v)} options={STATUS_OPTIONS.map(s=>({value:s.value,label:s.label}))}/>
+ <Select label="Billed to Client?" value={c.billedToClient} onChange={v=>updateCharge(c.id,"billedToClient",v)} options={[{value:"yes",label:"Yes"},{value:"no",label:"No - absorbed"},{value:"partial",label:"Partial"}]}/>
+ </div>
+ </div>
+ ))}
+ </div>
+ <button onClick={addCharge} style={{marginTop:"0.75rem",background:"transparent",border:`1px dashed rgba(255,45,120,0.4)`,color:JE.pink,padding:"0.6rem 1.25rem",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",cursor:"pointer",letterSpacing:"0.05em",width:"100%",textTransform:"uppercase"}}>+ Add Charge Line</button>
+ </div>
+
+ <div style={{background:JE.cardBg,padding:"1.75rem"}}>
+ <SectionHeader number="4" title="Dispute Tracker" subtitle="Billing fills - track every dispute this month"/>
+ <div style={{display:"flex",flexDirection:"column",gap:"0.75rem"}}>
+ {disputes.map((d,i)=>(
+ <div key={d.id} style={{background:JE.dark,padding:"1.25rem",border:`1px solid rgba(255,255,255,0.06)`}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"0.75rem"}}>
+ <div style={{color:JE.pink,fontFamily:"'Courier New',monospace",fontSize:"0.68rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Dispute #{i+1}</div>
+ {disputes.length>1&&<button onClick={()=>removeDispute(d.id)} style={{background:"transparent",border:"none",color:JE.dim,cursor:"pointer",fontFamily:"'Courier New',monospace",fontSize:"0.72rem"}}>Remove</button>}
+ </div>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap"}}>
+ <Select label="Charge Type" value={d.chargeType} onChange={v=>updateDispute(d.id,"chargeType",v)} options={[{value:"",label:"Select..."},...CHARGE_TYPES.map(t=>({value:t,label:t}))]}/>
+ <Input label="Carrier / Vendor" value={d.carrier} onChange={v=>updateDispute(d.id,"carrier",v)} placeholder="e.g. XPO Logistics"/>
+ <Input label="Disputed Amount ($)" value={d.amount} onChange={v=>updateDispute(d.id,"amount",v)} type="number" placeholder="320.00"/>
+ <Select label="Outcome" value={d.outcome} onChange={v=>updateDispute(d.id,"outcome",v)} options={[{value:"pending",label:"Pending"},{value:"won",label:"Won - credited"},{value:"lost",label:"Lost"},{value:"partial",label:"Partial credit"}]}/>
+ {(d.outcome==="won"||d.outcome==="partial")&&<Input label="Amount Recovered ($)" value={d.recovered} onChange={v=>updateDispute(d.id,"recovered",v)} type="number" placeholder="320.00"/>}
+ </div>
+ <div style={{marginTop:"0.75rem"}}>
+ <Textarea label="Dispute Reason / Notes" value={d.reason} onChange={v=>updateDispute(d.id,"reason",v)} placeholder="e.g. Detention charged but driver arrived on time." rows={2}/>
+ </div>
+ </div>
+ ))}
+ </div>
+ <button onClick={addDispute} style={{marginTop:"0.75rem",background:"transparent",border:`1px dashed rgba(255,45,120,0.4)`,color:JE.pink,padding:"0.6rem 1.25rem",fontFamily:"'Courier New',monospace",fontSize:"0.75rem",cursor:"pointer",letterSpacing:"0.05em",width:"100%",textTransform:"uppercase"}}>+ Add Dispute</button>
+ </div>
+
+ <div style={{background:JE.cardBg,padding:"1.75rem"}}>
+ <SectionHeader number="5" title="Operations Analysis" subtitle="Ops manager fills - the intelligence layer"/>
+ <div style={{display:"flex",flexDirection:"column",gap:"0.75rem"}}>
+ <Textarea label="Repeat Patterns Identified This Month" value={repeatPatterns} onChange={setRepeatPatterns} placeholder="e.g. Detention charges appearing on same carrier 3 months running." rows={3}/>
+ <Textarea label="Root Cause Summary" value={rootCauseSummary} onChange={setRootCauseSummary} placeholder="e.g. Carrier X billing detention at origin due to dock scheduling gaps." rows={3}/>
+ <Textarea label="Corrective Actions Underway" value={correctiveActions} onChange={setCorrectiveActions} placeholder="e.g. Updated dock scheduling protocol effective next cycle." rows={3}/>
+ </div>
+ </div>
+
+ <div style={{background:JE.cardBg,padding:"1.75rem"}}>
+ <SectionHeader number="6" title="Client Summary" subtitle="Plain language version the client receives"/>
+ <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",marginBottom:"0.75rem"}}>
+ <Select label="Overall Trend This Month" value={clientTrend} onChange={setClientTrend} options={[{value:"stable",label:"Stable"},{value:"improving",label:"Improving"},{value:"worsening",label:"Worsening"}]}/>
+ </div>
+ <div style={{display:"flex",flexDirection:"column",gap:"0.75rem"}}>
+ <Textarea label="What We Want You To Know (client-facing)" value={clientHighlight} onChange={setClientHighlight} placeholder="e.g. This month we identified a recurring detention pattern on your Lane 7 shipments." rows={3}/>
+ <Textarea label="Action Required or Requested From Client" value={clientAction} onChange={setClientAction} placeholder="e.g. Please confirm updated delivery window for Site B." rows={2}/>
+ </div>
+ </div>
+
+ <button onClick={()=>setStage("preview")} style={{background:JE.pink,border:"none",color:JE.white,padding:"1rem",fontFamily:"'Courier New',monospace",fontSize:"0.88rem",cursor:"pointer",letterSpacing:"0.1em",textTransform:"uppercase",width:"100%"}}>Preview and Export Report</button>
+
+ <div style={{textAlign:"center",color:JE.dim,fontFamily:"'Courier New',monospace",fontSize:"0.6rem",letterSpacing:"0.1em",paddingBottom:"1rem",textTransform:"uppercase"}}>
+ Judicial Engineering · 3PL Diagnostic Suite · Layer 2 · I Trace It Back
+ </div>
+ </div>
+ </div>
+ </div>
+ );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+
+</body>
+</html>
