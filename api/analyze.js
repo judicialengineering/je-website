@@ -22,8 +22,16 @@ headers: {
 body: JSON.stringify(req.body),
 });
 
-const data = await response.json();
+const text = await response.text();
+console.log('Anthropic raw response:', text);
+
+try {
+const data = JSON.parse(text);
 return res.status(200).json(data);
+} catch(parseError) {
+console.error('Parse error:', parseError);
+return res.status(500).json({ error: 'Invalid response from AI', raw: text });
+}
 } catch (error) {
 console.error('Handler error:', error);
 return res.status(500).json({ error: error.message });
